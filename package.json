@@ -1,0 +1,43 @@
+{
+  "name": "coffee-tracker",
+  "version": "1.0.0",
+  "description": "A way to track which Nespresso pods we have tried and scored",
+  "private": true,
+  "type": "module",
+  "main": "src/server.js",
+  "engines": {
+    "node": ">=26 <27"
+  },
+  "scripts": {
+    "start": "node --env-file-if-exists=.env src/server.js",
+    "dev": "nodemon --watch src -e js,ejs --exec \"node --env-file-if-exists=.env src/server.js\"",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
+  },
+  "keywords": [],
+  "author": "Jayne Elliott",
+  "license": "MIT",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "bootstrap": "^5.3.9",
+    "bootstrap-icons": "^1.13.2",
+    "connect-mongo": "^6.0.0",
+    "cookie-parser": "^1.4.7",
+    "csrf-csrf": "^4.1.0",
+    "ejs": "^7.0.2",
+    "express": "^5.3.0",
+    "express-rate-limit": "^8.7.4",
+    "express-session": "^1.19.0",
+    "express-validator": "^7.3.2",
+    "helmet": "^8.3.0",
+    "mongoose": "^9.12.1"
+  },
+  "devDependencies": {
+    "@vitest/coverage-v8": "^5.1.0",
+    "mongodb-memory-server": "^11.3.0",
+    "nodemon": "^3.1.14",
+    "supertest": "^7.3.2",
+    "vitest": "^5.1.0"
+  }
+}

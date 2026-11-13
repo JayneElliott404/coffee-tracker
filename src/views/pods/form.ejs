@@ -1,0 +1,56 @@
+<%- include('../partials/header') %>
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <div class="card card-cafe">
+      <div class="card-body p-4 p-md-5">
+        <h1 class="h3 mb-4"><i class="bi bi-cup-hot me-2 text-copper"></i><%= title %></h1>
+        <form method="post" action="<%= action %>" novalidate>
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+          <div class="mb-3">
+            <label for="name" class="form-label">Pod name</label>
+            <input id="name" name="name" class="form-control<%= errors.name ? ' is-invalid' : '' %>" value="<%= pod.name || '' %>" maxlength="100" required autofocus placeholder="e.g. Ispirazione Ristretto Italiano">
+            <% if (errors.name) { %><div class="invalid-feedback"><%= errors.name.msg %></div><% } %>
+          </div>
+
+          <div class="row g-3 mb-3">
+            <div class="col-md-7">
+              <label for="intensity" class="form-label">Intensity: <output id="intensityValue" for="intensity" class="fw-semibold"><%= pod.intensity || 7 %></output> / 13</label>
+              <input id="intensity" name="intensity" type="range" class="form-range<%= errors.intensity ? ' is-invalid' : '' %>" min="1" max="13" step="1" value="<%= pod.intensity || 7 %>" data-output="intensityValue">
+              <% if (errors.intensity) { %><div class="invalid-feedback d-block"><%= errors.intensity.msg %></div><% } %>
+            </div>
+            <div class="col-md-5">
+              <label for="score" class="form-label">Score out of 10</label>
+              <input id="score" name="score" type="number" class="form-control<%= errors.score ? ' is-invalid' : '' %>" min="0" max="10" step="0.1" value="<%= pod.score ?? '' %>" required placeholder="e.g. 8.5">
+              <% if (errors.score) { %><div class="invalid-feedback"><%= errors.score.msg %></div><% } %>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="flavour" class="form-label">Flavour</label>
+            <input id="flavour" name="flavour" class="form-control<%= errors.flavour ? ' is-invalid' : '' %>" value="<%= pod.flavour || '' %>" maxlength="200" placeholder="e.g. Cocoa, roasted cereal notes">
+            <% if (errors.flavour) { %><div class="invalid-feedback"><%= errors.flavour.msg %></div><% } %>
+          </div>
+
+          <div class="mb-3">
+            <label for="dateTried" class="form-label">Date tried</label>
+            <input id="dateTried" name="dateTried" type="date" class="form-control<%= errors.dateTried ? ' is-invalid' : '' %>" value="<%= toDateInput(pod.dateTried) %>">
+            <% if (errors.dateTried) { %><div class="invalid-feedback"><%= errors.dateTried.msg %></div><% } %>
+          </div>
+
+          <div class="mb-4">
+            <label for="notes" class="form-label">Tasting notes</label>
+            <textarea id="notes" name="notes" rows="4" class="form-control<%= errors.notes ? ' is-invalid' : '' %>" maxlength="2000" placeholder="How was it? With milk? Would you buy it again?"><%= pod.notes || '' %></textarea>
+            <% if (errors.notes) { %><div class="invalid-feedback"><%= errors.notes.msg %></div><% } %>
+          </div>
+
+          <div class="d-flex gap-2">
+            <button class="btn btn-espresso" type="submit"><i class="bi bi-check-lg me-1"></i>Save pod</button>
+            <a href="/pods" class="btn btn-outline-espresso">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<%- include('../partials/footer') %>

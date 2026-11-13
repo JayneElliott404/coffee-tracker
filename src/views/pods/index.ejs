@@ -1,0 +1,63 @@
+<%- include('../partials/header') %>
+<section class="hero-cafe rounded-4 p-4 p-md-5 mb-4">
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+    <div>
+      <h1 class="display-6 mb-1">Your pod menu</h1>
+      <p class="mb-0 opacity-75"><%= total %> <%= total === 1 ? 'pod' : 'pods' %> tasted so far</p>
+    </div>
+    <a href="/pods/new" class="btn btn-crema btn-lg"><i class="bi bi-plus-lg me-1"></i>Add a pod</a>
+  </div>
+</section>
+
+<form class="card card-cafe filter-bar mb-4" method="get" action="/pods" role="search">
+  <div class="card-body row g-2 align-items-end">
+    <div class="col-12 col-md-4">
+      <label for="q" class="form-label small mb-1">Search by name</label>
+      <input id="q" name="q" type="search" class="form-control" value="<%= values.q %>" placeholder="e.g. Ristretto">
+    </div>
+    <div class="col-12 col-md-3">
+      <label for="flavour" class="form-label small mb-1">Flavour contains</label>
+      <input id="flavour" name="flavour" class="form-control" value="<%= values.flavour %>" placeholder="e.g. cocoa">
+    </div>
+    <div class="col-6 col-md-1">
+      <label for="minIntensity" class="form-label small mb-1">Min</label>
+      <input id="minIntensity" name="minIntensity" type="number" min="1" max="13" class="form-control" value="<%= values.minIntensity %>">
+    </div>
+    <div class="col-6 col-md-1">
+      <label for="maxIntensity" class="form-label small mb-1">Max</label>
+      <input id="maxIntensity" name="maxIntensity" type="number" min="1" max="13" class="form-control" value="<%= values.maxIntensity %>">
+    </div>
+    <div class="col-8 col-md-2">
+      <label for="sort" class="form-label small mb-1">Sort by</label>
+      <select id="sort" name="sort" class="form-select">
+        <% for (const [key, option] of Object.entries(sortOptions)) { %>
+        <option value="<%= key %>"<%= values.sort === key ? ' selected' : '' %>><%= option.label %></option>
+        <% } %>
+      </select>
+    </div>
+    <div class="col-4 col-md-1 d-grid">
+      <button class="btn btn-espresso" type="submit" aria-label="Apply filters"><i class="bi bi-funnel"></i></button>
+    </div>
+  </div>
+</form>
+
+<% if (pods.length === 0) { %>
+<div class="text-center py-5 empty-state">
+  <i class="bi bi-cup display-1 text-crema"></i>
+  <% if (total === 0) { %>
+  <h2 class="h4 mt-3">No pods yet</h2>
+  <p class="text-muted">Brew one, then add it to your menu.</p>
+  <a href="/pods/new" class="btn btn-espresso">Add your first pod</a>
+  <% } else { %>
+  <h2 class="h4 mt-3">No pods match those filters</h2>
+  <a href="/pods" class="btn btn-outline-espresso">Clear filters</a>
+  <% } %>
+</div>
+<% } else { %>
+<div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
+  <% for (const pod of pods) { %>
+    <%- include('../partials/podCard', { pod }) %>
+  <% } %>
+</div>
+<% } %>
+<%- include('../partials/footer') %>

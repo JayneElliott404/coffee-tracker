@@ -1,0 +1,118 @@
+import { beforeAll, describe, expect, it } from 'vitest';
+import { createApp } from '../../src/app.js';
+import { Pod } from '../../src/models/Pod.js';
+import { createPod, registerAndLogin, setupTestDb, submit } from '../helpers.js';
+
+setupTestDb();
+
+let app;
+beforeAll(() => {
+  app = createApp({ authRateLimit: 1000 });
+});
+
+describe('pods', () => {
+  it('adds a pod with a decimal score', async () => {
+    const agent = await registerAndLogin(app, 'jayne');
+    const res = await createPod(agent, { name: 'Vanilla Eclair', score: '7.25', dateTried: '2026-11-01' });
+    expect(res.status).toBe(302);
+    expect(res.headers.location).toBe('/pods');
+
+    const pod = await Pod.findOne({ name: 'Vanilla Eclair' });
+    expect(pod.score).toBe(7.3);
+    expect(pod.intensity).toBe(9);
+    expect(pod.dateTried.toISOString()).toBe('2026-11-01T00:00:00.000Z');
+
+    const page = await agent.get('/pods');
+    expect(page.text).toContain('Vanilla Eclair');
+    expect(page.text).toContain('7.3');
+    expect(page.text).toContain('Added Vanilla Eclair.');
+  });
+
+  it('re-shows the form with errors and keeps the input', async () => {
+    const agent = await registerAndLogin(app, 'jayne');
+    const res = await createPod(agent, { name: 'Kazaar', intensity: '14', score: '10.1' });
+    expect(res.status).toBe(422);
+    expect(res.text).toContain('Intensity must be a whole number from 1 to 13');
+    expect(res.text).toContain('Score must be a number from 0 to 10');
+    expect(res.text).toContain('value="Kazaar"');
+    expect(await Pod.countDocuments()).toBe(0);
+  });
+
+  it('escapes user content in the page', async () => {
+    const agent = await registerAndLogin(app, 'jayne');
+    await createPod(agent, { name: '<script>alert(1)</script>' });
+    const page = await agent.get('/pods');
+    expect(page.text).not.toContain('<script>alert(1)</script>');
+    expect(page.text).toContain('&lt;script&gt;alert(1)&lt;/script&gt;');
+  });
+
+  it('edits a pod', async () => {
+    const agent = await registerAndLogin(app, 'jayne');
+    await createPod(agent);
+    const pod = await Pod.findOne();
+
+    expect((await agent.get(`/pods/${pod._id}/edit`)).status).toBe(200);
+    const res = await submit(agent, `/pods/${pod._id}`, { name: 'Arpeggio Decaf', intensity: '9', score: '9.1', flavour: 'Cocoa', notes: 'Better with milk' });
+    expect(res.status).toBe(302);
+
+    const updated = await Pod.findById(pod._id);
+    expect(updated.name).toBe('Arpeggio Decaf');
+    expect(updated.score).toBe(9.1);
+    expect(updated.notes).toBe('Better with milk');
+  });
+
+  it('shows validation errors when editing', async () => {
+    const agent = await registerAndLogin(app, 'jayne');
+    await createPod(agent);
+    const pod = await Pod.findOne();
+    const res = await submit(agent, `/pods/${pod._id}`, { name: '', intensity: '9', score: '9' });
+    expect(res.status).toBe(422);
+    expect(res.text).toContain('Enter the pod name');
+  });
+
+  it('deletes a pod', async () => {
+    const agent = await registerAndLogin(app, 'jayne');
+    await createPod(agent);
+    const pod = await Pod.findOne();
+    const res = await submit(agent, `/pods/${pod._id}/delete`);
+    expect(res.status).toBe(302);
+    expect(await Pod.countDocuments()).toBe(0);
+  });
+
+  it("never lets a user see or change another user's pod", async () => {
+    const owner = await registerAndLogin(app, 'owner');
+    await createPod(owner, { name: 'Secret Blend' });
+    const pod = await Pod.findOne();
+    const intruder = await registerAndLogin(app, 'intruder');
+
+    expect((await intruder.get('/pods')).text).not.toContain('Secret Blend');
+    expect((await intruder.get(`/pods/${pod._id}/edit`)).status).toBe(404);
+    expect((await submit(intruder, `/pods/${pod._id}`, { name: 'Hacked', intensity: '1', score: '0' })).status).toBe(404);
+    expect((await submit(intruder, `/pods/${pod._id}/delete`)).status).toBe(404);
+    expect((await Pod.findById(pod._id)).name).toBe('Secret Blend');
+  });
+
+  it('returns 404 for malformed pod ids', async () => {
+    const agent = await registerAndLogin(app, 'jayne');
+    expect((await agent.get('/pods/not-an-id/edit')).status).toBe(404);
+  });
+
+  it('searches, filters and sorts', async () => {
+    const agent = await registerAndLogin(app, 'jayne');
+    await createPod(agent, { name: 'Ristretto', intensity: '10', score: '6.5', flavour: 'Intense, roasted' });
+    await createPod(agent, { name: 'Volluto', intensity: '4', score: '8.8', flavour: 'Sweet biscuit' });
+    await createPod(agent, { name: 'Kazaar', intensity: '12', score: '7.2', flavour: 'Peppery' });
+
+    const names = (text) => [...text.matchAll(/<h2 class="h5 card-title mb-0">([^<]+)<\/h2>/g)].map((m) => m[1]);
+
+    expect(names((await agent.get('/pods?q=VOLL')).text)).toEqual(['Volluto']);
+    expect(names((await agent.get('/pods?flavour=roast')).text)).toEqual(['Ristretto']);
+    expect(names((await agent.get('/pods?minIntensity=10&sort=intensity_asc')).text)).toEqual(['Ristretto', 'Kazaar']);
+    expect(names((await agent.get('/pods?sort=score_desc')).text)).toEqual(['Volluto', 'Kazaar', 'Ristretto']);
+    expect(names((await agent.get('/pods?sort=name')).text)).toEqual(['Kazaar', 'Ristretto', 'Volluto']);
+
+    const bogus = await agent.get('/pods?sort=%24where');
+    expect(bogus.status).toBe(200);
+    expect(names(bogus.text)).toHaveLength(3);
+  });
+});

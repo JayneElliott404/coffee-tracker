@@ -1,0 +1,67 @@
+<%- include('partials/header') %>
+<h1 class="h2 mb-4"><i class="bi bi-bar-chart me-2 text-copper"></i>Your tasting stats</h1>
+
+<div class="row g-4 mb-4">
+  <div class="col-md-4">
+    <div class="card card-cafe stat-card h-100"><div class="card-body">
+      <div class="stat-label">Pods tried</div>
+      <div class="stat-value"><%= summary.count %></div>
+    </div></div>
+  </div>
+  <div class="col-md-4">
+    <div class="card card-cafe stat-card h-100"><div class="card-body">
+      <div class="stat-label">Average score</div>
+      <div class="stat-value"><%= summary.count ? formatScore(summary.avgScore) : '–' %><small class="fs-6 text-muted"> / 10</small></div>
+    </div></div>
+  </div>
+  <div class="col-md-4">
+    <div class="card card-cafe stat-card h-100"><div class="card-body">
+      <div class="stat-label">Average intensity</div>
+      <div class="stat-value"><%= summary.count ? summary.avgIntensity.toFixed(1) : '–' %><small class="fs-6 text-muted"> / 13</small></div>
+    </div></div>
+  </div>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-6">
+    <div class="card card-cafe h-100"><div class="card-body">
+      <h2 class="h5 mb-3">Score spread</h2>
+      <% for (const bucket of distribution) { %>
+      <div class="d-flex align-items-center gap-2 mb-1">
+        <span class="bar-label small text-muted"><%= bucket.score === 10 ? '10' : `${bucket.score}–${bucket.score}.9` %></span>
+        <div class="bar-track flex-grow-1">
+          <div class="bar-fill" data-width="<%= Math.round((bucket.count / maxBucket) * 100) %>"></div>
+        </div>
+        <span class="small fw-semibold bar-count"><%= bucket.count %></span>
+      </div>
+      <% } %>
+    </div></div>
+  </div>
+  <div class="col-lg-6">
+    <div class="card card-cafe mb-4"><div class="card-body">
+      <h2 class="h5 mb-3"><i class="bi bi-trophy me-1 text-copper"></i>Top rated</h2>
+      <% if (topRated.length === 0) { %><p class="text-muted mb-0">Nothing rated yet.</p><% } %>
+      <ol class="list-group list-group-numbered list-group-flush">
+        <% for (const pod of topRated) { %>
+        <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent">
+          <span class="ms-2 me-auto"><%= pod.name %></span>
+          <span class="score-badge <%= scoreClass(pod.score) %>"><%= formatScore(pod.score) %></span>
+        </li>
+        <% } %>
+      </ol>
+    </div></div>
+    <div class="card card-cafe"><div class="card-body">
+      <h2 class="h5 mb-3"><i class="bi bi-clock-history me-1 text-copper"></i>Recently tried</h2>
+      <% if (recent.length === 0) { %><p class="text-muted mb-0">Nothing tried yet.</p><% } %>
+      <ul class="list-group list-group-flush">
+        <% for (const pod of recent) { %>
+        <li class="list-group-item d-flex justify-content-between bg-transparent">
+          <span><%= pod.name %></span>
+          <small class="text-muted"><%= formatDate(pod.dateTried) %></small>
+        </li>
+        <% } %>
+      </ul>
+    </div></div>
+  </div>
+</div>
+<%- include('partials/footer') %>

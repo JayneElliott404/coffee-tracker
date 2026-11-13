@@ -1,0 +1,67 @@
+<%- include('../partials/header') %>
+<% const isSelf = target._id.equals(currentUser._id); %>
+<a href="/admin/users" class="btn btn-sm btn-outline-espresso mb-3"><i class="bi bi-arrow-left me-1"></i>All users</a>
+
+<% if (locals.tempPassword) { %>
+<div class="alert alert-warning" role="alert">
+  <h2 class="h5"><i class="bi bi-key me-1"></i>Temporary password for <%= target.username %></h2>
+  <p class="mb-2">Give this to the user. It will not be shown again. They must change it when they next log in.</p>
+  <code class="fs-5 user-select-all"><%= tempPassword %></code>
+</div>
+<% } %>
+
+<div class="card card-cafe mb-4">
+  <div class="card-body">
+    <div class="d-flex flex-column flex-lg-row justify-content-between gap-3">
+      <div>
+        <h1 class="h3 mb-1"><i class="bi bi-person-circle me-2 text-copper"></i><%= target.username %></h1>
+        <div class="d-flex flex-wrap gap-2 small">
+          <span class="badge <%= target.role === 'admin' ? 'text-bg-copper' : 'text-bg-light' %>"><%= target.role %></span>
+          <% if (target.disabled) { %><span class="badge text-bg-danger">Disabled</span><% } else { %><span class="badge text-bg-success">Active</span><% } %>
+          <% if (target.mustChangePassword) { %><span class="badge text-bg-warning">Must change password</span><% } %>
+          <span class="text-muted">Joined <%= formatDate(target.createdAt) %></span>
+          <span class="text-muted">· Last login <%= target.lastLoginAt ? formatDate(target.lastLoginAt) : 'never' %></span>
+        </div>
+      </div>
+      <% if (isSelf) { %>
+      <p class="text-muted small mb-0 align-self-center">This is your account. Ask another admin to change it.</p>
+      <% } else { %>
+      <div class="d-flex flex-wrap gap-2 align-items-start">
+        <form method="post" action="/admin/users/<%= target._id %>/role" class="m-0" data-confirm="<%= target.role === 'admin' ? `Remove admin rights from ${target.username}?` : `Make ${target.username} an admin?` %>">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <input type="hidden" name="role" value="<%= target.role === 'admin' ? 'user' : 'admin' %>">
+          <button class="btn btn-sm btn-outline-espresso" type="submit">
+            <i class="bi bi-shield<%= target.role === 'admin' ? '-slash' : '-plus' %> me-1"></i><%= target.role === 'admin' ? 'Remove admin' : 'Make admin' %>
+          </button>
+        </form>
+        <form method="post" action="/admin/users/<%= target._id %>/<%= target.disabled ? 'enable' : 'disable' %>" class="m-0" data-confirm="<%= target.disabled ? 'Enable' : 'Disable' %> <%= target.username %>?">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <button class="btn btn-sm btn-outline-warning" type="submit">
+            <i class="bi bi-<%= target.disabled ? 'unlock' : 'lock' %> me-1"></i><%= target.disabled ? 'Enable' : 'Disable' %>
+          </button>
+        </form>
+        <form method="post" action="/admin/users/<%= target._id %>/temp-password" class="m-0" data-confirm="Set a new temporary password for <%= target.username %>? Their current password will stop working.">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <button class="btn btn-sm btn-outline-secondary" type="submit"><i class="bi bi-key me-1"></i>Temporary password</button>
+        </form>
+        <form method="post" action="/admin/users/<%= target._id %>/delete" class="m-0" data-confirm="Permanently delete <%= target.username %> and all <%= pods.length %> of their pods?">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <button class="btn btn-sm btn-outline-danger" type="submit"><i class="bi bi-trash me-1"></i>Delete</button>
+        </form>
+      </div>
+      <% } %>
+    </div>
+  </div>
+</div>
+
+<h2 class="h4 mb-3"><%= target.username %>'s pods <span class="text-muted fs-6">(<%= pods.length %>, read-only)</span></h2>
+<% if (pods.length === 0) { %>
+<p class="text-muted">No pods yet.</p>
+<% } else { %>
+<div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
+  <% for (const pod of pods) { %>
+    <%- include('../partials/podCard', { pod, readOnly: true }) %>
+  <% } %>
+</div>
+<% } %>
+<%- include('../partials/footer') %>

@@ -1,0 +1,50 @@
+<%- include('../partials/header') %>
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+  <h1 class="h2 mb-0"><i class="bi bi-shield-lock me-2 text-copper"></i>Manage users</h1>
+  <form class="d-flex gap-2" method="get" action="/admin/users" role="search">
+    <input name="q" type="search" class="form-control" value="<%= q %>" placeholder="Search usernames" aria-label="Search usernames">
+    <button class="btn btn-espresso" type="submit" aria-label="Search"><i class="bi bi-search"></i></button>
+  </form>
+</div>
+
+<div class="card card-cafe">
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+      <thead>
+        <tr><th>Username</th><th>Role</th><th>Status</th><th class="text-end">Pods</th><th>Last login</th><th>Joined</th></tr>
+      </thead>
+      <tbody>
+        <% if (users.length === 0) { %>
+        <tr><td colspan="6" class="text-center text-muted py-4">No users found.</td></tr>
+        <% } %>
+        <% for (const u of users) { %>
+        <tr>
+          <td><a href="/admin/users/<%= u._id %>" class="fw-semibold"><%= u.username %></a></td>
+          <td><span class="badge <%= u.role === 'admin' ? 'text-bg-copper' : 'text-bg-light' %>"><%= u.role %></span></td>
+          <td>
+            <% if (u.disabled) { %><span class="badge text-bg-danger">Disabled</span>
+            <% } else if (u.mustChangePassword) { %><span class="badge text-bg-warning">Password reset</span>
+            <% } else { %><span class="badge text-bg-success">Active</span><% } %>
+          </td>
+          <td class="text-end"><%= u.podCount %></td>
+          <td><%= u.lastLoginAt ? formatDate(u.lastLoginAt) : 'Never' %></td>
+          <td><%= formatDate(u.createdAt) %></td>
+        </tr>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<% if (totalPages > 1) { %>
+<nav class="mt-3" aria-label="User pages">
+  <ul class="pagination justify-content-center">
+    <% for (let p = 1; p <= totalPages; p++) { %>
+    <li class="page-item<%= p === page ? ' active' : '' %>">
+      <a class="page-link" href="/admin/users?<%= new URLSearchParams({ q, page: p }) %>"><%= p %></a>
+    </li>
+    <% } %>
+  </ul>
+</nav>
+<% } %>
+<%- include('../partials/footer') %>
