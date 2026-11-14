@@ -33,4 +33,18 @@ describe('stats', () => {
     const topRated = res.text.slice(res.text.indexOf('Top rated'), res.text.indexOf('Recently tried'));
     expect(topRated.indexOf('Volluto')).toBeLessThan(topRated.indexOf('Kazaar'));
   });
+
+  it('prefixes the brand to pod names in top rated and recently tried', async () => {
+    const agent = await registerAndLogin(app, 'jayne');
+    await createPod(agent, { name: 'Volluto', brand: 'Nespresso', score: '8.8' });
+    await createPod(agent, { name: 'Legacy', score: '5' });
+
+    const res = await agent.get('/stats');
+    const topRated = res.text.slice(res.text.indexOf('Top rated'), res.text.indexOf('Recently tried'));
+    const recent = res.text.slice(res.text.indexOf('Recently tried'));
+    for (const section of [topRated, recent]) {
+      expect(section).toContain('Nespresso Volluto');
+      expect(section).toMatch(/>Legacy</);
+    }
+  });
 });

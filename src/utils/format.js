@@ -18,6 +18,10 @@ export function toDateInput(value) {
   return new Date(value).toISOString().slice(0, 10);
 }
 
+export function podLabel(pod) {
+  return [pod.brand, pod.name].filter(Boolean).join(' ');
+}
+
 export function scoreClass(score) {
   if (score >= 8) return 'score-high';
   if (score >= 5) return 'score-mid';

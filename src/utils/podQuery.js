@@ -27,11 +27,13 @@ function parseIntensity(value) {
 
 export function buildPodQuery(userId, query = {}) {
   const filter = { user: userId };
+  const brand = cleanText(query.brand);
   const q = cleanText(query.q);
   const flavour = cleanText(query.flavour);
   const minIntensity = parseIntensity(query.minIntensity);
   const maxIntensity = parseIntensity(query.maxIntensity);
 
+  if (brand) filter.brand = { $regex: escapeRegex(brand), $options: 'i' };
   if (q) filter.name = { $regex: escapeRegex(q), $options: 'i' };
   if (flavour) filter.flavour = { $regex: escapeRegex(flavour), $options: 'i' };
   if (minIntensity !== undefined || maxIntensity !== undefined) {
@@ -47,6 +49,7 @@ export function buildPodQuery(userId, query = {}) {
     filter,
     sort: SORT_OPTIONS[sortKey].sort,
     values: {
+      brand,
       q,
       flavour,
       minIntensity: minIntensity ?? '',

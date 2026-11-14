@@ -40,12 +40,16 @@ describe('buildPodQuery', () => {
     expect(filter.name).toEqual({ $regex: 'Vanilla \\(Eclair\\)', $options: 'i' });
   });
 
+  it('builds a brand contains filter', () => {
+    expect(buildPodQuery(userId, { brand: ' nespr(' }).filter.brand).toEqual({ $regex: 'nespr\\(', $options: 'i' });
+  });
+
   it('builds a flavour contains filter', () => {
     expect(buildPodQuery(userId, { flavour: 'cocoa' }).filter.flavour).toEqual({ $regex: 'cocoa', $options: 'i' });
   });
 
   it('ignores non-string search values (e.g. arrays or operator objects)', () => {
-    const { filter } = buildPodQuery(userId, { q: ['a', 'b'], flavour: { $ne: null } });
+    const { filter } = buildPodQuery(userId, { q: ['a', 'b'], brand: ['x'], flavour: { $ne: null } });
     expect(filter).toEqual({ user: userId });
   });
 

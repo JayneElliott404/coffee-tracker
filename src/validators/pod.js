@@ -2,6 +2,12 @@ import { body } from 'express-validator';
 import { MAX_INTENSITY, MAX_SCORE, MIN_INTENSITY, MIN_SCORE } from '../models/Pod.js';
 
 export const podRules = [
+  body('brand')
+    .default('')
+    .isString()
+    .trim()
+    .isLength({ max: 100 })
+    .withMessage('Brand must be 100 characters or fewer'),
   body('name')
     .isString()
     .trim()

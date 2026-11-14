@@ -16,6 +16,8 @@ export function roundScore(value) {
 const podSchema = new mongoose.Schema(
   {
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true, index: true },
+    // Optional so pods created before brands existed stay valid without a migration.
+    brand: { type: String, trim: true, maxlength: 100, default: '' },
     name: { type: String, required: true, trim: true, maxlength: 100 },
     intensity: {
       type: Number,

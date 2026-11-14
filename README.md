@@ -2,7 +2,7 @@
 
 A way to track which Nespresso pods we have tried and scored.
 
-Built with Node.js 26 LTS, Express 5, EJS, Bootstrap 5 and MongoDB Atlas (via Mongoose). Each user keeps a private list of pods with intensity (1–13), flavour, a score out of 10 (one decimal place), tasting notes and the date tried. Admins can manage other accounts.
+Built with Node.js 26 LTS, Express 5, EJS, Bootstrap 5 and MongoDB Atlas (via Mongoose). Each user keeps a private list of pods with brand (optional), intensity (1–13), flavour, a score out of 10 (one decimal place), tasting notes and the date tried. Admins can manage other accounts.
 
 ## Contents
 

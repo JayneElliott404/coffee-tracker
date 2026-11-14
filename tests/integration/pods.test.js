@@ -1,6 +1,7 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 import { createApp } from '../../src/app.js';
 import { Pod } from '../../src/models/Pod.js';
+import { User } from '../../src/models/User.js';
 import { createPod, registerAndLogin, setupTestDb, submit } from '../helpers.js';
 
 setupTestDb();
@@ -61,6 +62,32 @@ describe('pods', () => {
     expect(updated.notes).toBe('Better with milk');
   });
 
+  it('saves and shows the brand, with the brand input before the name input', async () => {
+    const agent = await registerAndLogin(app, 'jayne');
+    const form = await agent.get('/pods/new');
+    expect(form.text.indexOf('name="brand"')).toBeGreaterThan(-1);
+    expect(form.text.indexOf('name="brand"')).toBeLessThan(form.text.indexOf('name="name"'));
+
+    await createPod(agent, { name: 'Volluto', brand: '  Nespresso ' });
+    expect((await Pod.findOne()).brand).toBe('Nespresso');
+    expect((await agent.get('/pods')).text).toContain('Nespresso');
+  });
+
+  it('lets a pod saved before brands existed be viewed and given a brand', async () => {
+    const agent = await registerAndLogin(app, 'jayne');
+    const user = await User.findOne({ username: 'jayne' });
+    const { insertedId } = await Pod.collection.insertOne({ user: user._id, name: 'Legacy', intensity: 5, score: 7 });
+
+    expect((await agent.get('/pods')).text).toContain('Legacy');
+    expect((await agent.get(`/pods/${insertedId}/edit`)).status).toBe(200);
+
+    const res = await submit(agent, `/pods/${insertedId}`, { name: 'Legacy', intensity: '5', score: '7', brand: 'Starbucks' });
+    expect(res.status).toBe(302);
+    const updated = await Pod.findById(insertedId);
+    expect(updated.brand).toBe('Starbucks');
+    expect(updated.name).toBe('Legacy');
+  });
+
   it('shows validation errors when editing', async () => {
     const agent = await registerAndLogin(app, 'jayne');
     await createPod(agent);
@@ -99,12 +126,15 @@ describe('pods', () => {
 
   it('searches, filters and sorts', async () => {
     const agent = await registerAndLogin(app, 'jayne');
-    await createPod(agent, { name: 'Ristretto', intensity: '10', score: '6.5', flavour: 'Intense, roasted' });
-    await createPod(agent, { name: 'Volluto', intensity: '4', score: '8.8', flavour: 'Sweet biscuit' });
+    await createPod(agent, { name: 'Ristretto', brand: 'Nespresso', intensity: '10', score: '6.5', flavour: 'Intense, roasted' });
+    await createPod(agent, { name: 'Volluto', brand: 'Starbucks', intensity: '4', score: '8.8', flavour: 'Sweet biscuit' });
     await createPod(agent, { name: 'Kazaar', intensity: '12', score: '7.2', flavour: 'Peppery' });
 
     const names = (text) => [...text.matchAll(/<h2 class="h5 card-title mb-0">([^<]+)<\/h2>/g)].map((m) => m[1]);
 
+    const page = (await agent.get('/pods')).text;
+    expect(page.indexOf('name="brand"')).toBeLessThan(page.indexOf('name="q"'));
+    expect(names((await agent.get('/pods?brand=STAR')).text)).toEqual(['Volluto']);
     expect(names((await agent.get('/pods?q=VOLL')).text)).toEqual(['Volluto']);
     expect(names((await agent.get('/pods?flavour=roast')).text)).toEqual(['Ristretto']);
     expect(names((await agent.get('/pods?minIntensity=10&sort=intensity_asc')).text)).toEqual(['Ristretto', 'Kazaar']);

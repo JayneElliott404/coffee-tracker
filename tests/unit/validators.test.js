@@ -39,6 +39,12 @@ describe('podRules', () => {
     expect(errors.intensity).toBeDefined();
   });
 
+  it('allows a missing or blank brand but rejects one over 100 characters', async () => {
+    expect((await validate(podRules, validPod)).errors.brand).toBeUndefined();
+    expect((await validate(podRules, { ...validPod, brand: '' })).errors.brand).toBeUndefined();
+    expect((await validate(podRules, { ...validPod, brand: 'x'.repeat(101) })).errors.brand).toBeDefined();
+  });
+
   it('rejects a blank name', async () => {
     const { errors } = await validate(podRules, { ...validPod, name: '   ' });
     expect(errors.name.msg).toBe('Enter the pod name');
