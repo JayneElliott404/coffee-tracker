@@ -52,7 +52,7 @@ export function createApp({ authRateLimit } = {}) {
   app.use(cookieParser());
   app.use(
     session({
-      name: 'podcafe.sid',
+      name: 'nespresso-tracker.sid',
       secret,
       resave: false,
       // Anonymous sessions must persist so CSRF tokens on the login/register forms stay valid.
@@ -70,7 +70,7 @@ export function createApp({ authRateLimit } = {}) {
   const { generateCsrfToken, doubleCsrfProtection } = doubleCsrf({
     getSecret: () => secret,
     getSessionIdentifier: (req) => req.session.id,
-    cookieName: isProd ? '__Host-podcafe.x-csrf-token' : 'podcafe.x-csrf-token',
+    cookieName: isProd ? '__Host-nespresso-tracker.x-csrf-token' : 'nespresso-tracker.x-csrf-token',
     cookieOptions: { sameSite: 'lax', secure: isProd, path: '/' },
     getCsrfTokenFromRequest: (req) => req.body?._csrf,
   });

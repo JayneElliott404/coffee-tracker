@@ -1,4 +1,4 @@
-# The Pod Café
+# Nespresso Tracker
 
 A way to track which Nespresso pods we have tried and scored.
 
@@ -143,8 +143,8 @@ GitHub Actions (`.github/workflows/ci.yml`) runs the tests with coverage on ever
 ## Run with Docker
 
 ```bash
-docker build -t podcafe .
-docker run --rm --env-file .env -p 3000:3000 podcafe
+docker build -t nespresso-tracker .
+docker run --rm --env-file .env -p 3000:3000 nespresso-tracker
 ```
 
 Then open <http://localhost:3000>.
@@ -168,7 +168,7 @@ Then open <http://localhost:3000>.
    | `NODE_ENV` | `production` |
 
    Render sets `PORT` automatically. The Node version comes from `.node-version` (`26`).
-6. Click **Create Web Service** and watch the logs for `The Pod Café is open`.
+6. Click **Create Web Service** and watch the logs for `Nespresso Tracker is open`.
 7. Set the **Health Check Path** to `/healthz` (Settings → Health & Alerts).
 8. Open your `https://<name>.onrender.com` URL, register, then [make yourself an admin](#make-yourself-an-admin) against the `podcafe` database.
 

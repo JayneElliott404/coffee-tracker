@@ -11,5 +11,5 @@ try {
 }
 
 createApp().listen(port, () => {
-  console.log(`The Pod Café is open at http://localhost:${port}`);
+  console.log(`Nespresso Tracker is open at http://localhost:${port}`);
 });
