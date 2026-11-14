@@ -8,8 +8,14 @@
           <input type="hidden" name="_csrf" value="<%= csrfToken %>">
 
           <div class="mb-3">
+            <label for="brand" class="form-label">Brand</label>
+            <input id="brand" name="brand" class="form-control<%= errors.brand ? ' is-invalid' : '' %>" value="<%= pod.brand || '' %>" maxlength="100" autofocus placeholder="e.g. Nespresso">
+            <% if (errors.brand) { %><div class="invalid-feedback"><%= errors.brand.msg %></div><% } %>
+          </div>
+
+          <div class="mb-3">
             <label for="name" class="form-label">Pod name</label>
-            <input id="name" name="name" class="form-control<%= errors.name ? ' is-invalid' : '' %>" value="<%= pod.name || '' %>" maxlength="100" required autofocus placeholder="e.g. Ispirazione Ristretto Italiano">
+            <input id="name" name="name" class="form-control<%= errors.name ? ' is-invalid' : '' %>" value="<%= pod.name || '' %>" maxlength="100" required placeholder="e.g. Ispirazione Ristretto Italiano">
             <% if (errors.name) { %><div class="invalid-feedback"><%= errors.name.msg %></div><% } %>
           </div>
 

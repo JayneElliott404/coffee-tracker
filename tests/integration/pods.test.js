@@ -1,6 +1,7 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 import { createApp } from '../../src/app.js';
 import { Pod } from '../../src/models/Pod.js';
+import { User } from '../../src/models/User.js';
 import { createPod, registerAndLogin, setupTestDb, submit } from '../helpers.js';
 
 setupTestDb();
@@ -59,6 +60,32 @@ describe('pods', () => {
     expect(updated.name).toBe('Arpeggio Decaf');
     expect(updated.score).toBe(9.1);
     expect(updated.notes).toBe('Better with milk');
+  });
+
+  it('saves and shows the brand, with the brand input before the name input', async () => {
+    const agent = await registerAndLogin(app, 'jayne');
+    const form = await agent.get('/pods/new');
+    expect(form.text.indexOf('name="brand"')).toBeGreaterThan(-1);
+    expect(form.text.indexOf('name="brand"')).toBeLessThan(form.text.indexOf('name="name"'));
+
+    await createPod(agent, { name: 'Volluto', brand: '  Nespresso ' });
+    expect((await Pod.findOne()).brand).toBe('Nespresso');
+    expect((await agent.get('/pods')).text).toContain('Nespresso');
+  });
+
+  it('lets a pod saved before brands existed be viewed and given a brand', async () => {
+    const agent = await registerAndLogin(app, 'jayne');
+    const user = await User.findOne({ username: 'jayne' });
+    const { insertedId } = await Pod.collection.insertOne({ user: user._id, name: 'Legacy', intensity: 5, score: 7 });
+
+    expect((await agent.get('/pods')).text).toContain('Legacy');
+    expect((await agent.get(`/pods/${insertedId}/edit`)).status).toBe(200);
+
+    const res = await submit(agent, `/pods/${insertedId}`, { name: 'Legacy', intensity: '5', score: '7', brand: 'Starbucks' });
+    expect(res.status).toBe(302);
+    const updated = await Pod.findById(insertedId);
+    expect(updated.brand).toBe('Starbucks');
+    expect(updated.name).toBe('Legacy');
   });
 
   it('shows validation errors when editing', async () => {
