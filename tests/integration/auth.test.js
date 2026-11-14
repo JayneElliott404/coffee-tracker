@@ -100,7 +100,7 @@ describe('authentication', () => {
 
   it('sets hardened session cookies', async () => {
     const res = await request(app).get('/login');
-    const cookie = res.headers['set-cookie'].find((c) => c.startsWith('podcafe.sid='));
+    const cookie = res.headers['set-cookie'].find((c) => c.startsWith('nespresso-tracker.sid='));
     expect(cookie).toMatch(/HttpOnly/i);
     expect(cookie).toMatch(/SameSite=Lax/i);
   });

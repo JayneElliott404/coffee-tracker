@@ -84,14 +84,14 @@ export function authRouter({ authRateLimit = 10 } = {}) {
     }
 
     await startSession(req, user._id);
-    req.flash('success', `Welcome to The Pod Café, ${user.username}!`);
+    req.flash('success', `Welcome to Nespresso Tracker, ${user.username}!`);
     res.redirect('/pods');
   });
 
   router.post('/logout', (req, res, next) => {
     req.session.destroy((err) => {
       if (err) return next(err);
-      res.clearCookie('podcafe.sid');
+      res.clearCookie('nespresso-tracker.sid');
       res.redirect('/login');
     });
   });
