@@ -1,7 +1,7 @@
 <% if (locals.getFlash) { %>
-  <% for (const [type, cls, icon] of [['success', 'success', 'check-circle'], ['error', 'danger', 'exclamation-triangle']]) { %>
+  <% for (const [type, cls, icon] of [['success', 'success', 'cup-hot'], ['error', 'error', 'exclamation-triangle']]) { %>
     <% for (const message of getFlash(type)) { %>
-    <div class="alert alert-<%= cls %> alert-dismissible fade show" role="alert">
+    <div class="alert alert-cafe alert-cafe-<%= cls %> alert-dismissible fade show" role="alert">
       <i class="bi bi-<%= icon %> me-2"></i><%= message %>
       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
