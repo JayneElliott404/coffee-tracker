@@ -23,13 +23,11 @@
           </div>
           <div class="mb-3">
             <label for="password" class="form-label">Password</label>
-            <input id="password" name="password" type="password" class="form-control<%= errors.password ? ' is-invalid' : '' %>" autocomplete="new-password" required minlength="8">
-            <% if (errors.password) { %><div class="invalid-feedback"><%= errors.password.msg %></div><% } %>
+            <%- include('../partials/passwordInput', { id: 'password', name: 'password', autocomplete: 'new-password', minlength: 8, error: errors.password }) %>
           </div>
           <div class="mb-4">
             <label for="confirmPassword" class="form-label">Confirm password</label>
-            <input id="confirmPassword" name="confirmPassword" type="password" class="form-control<%= errors.confirmPassword ? ' is-invalid' : '' %>" autocomplete="new-password" required>
-            <% if (errors.confirmPassword) { %><div class="invalid-feedback"><%= errors.confirmPassword.msg %></div><% } %>
+            <%- include('../partials/passwordInput', { id: 'confirmPassword', name: 'confirmPassword', autocomplete: 'new-password', error: errors.confirmPassword }) %>
           </div>
           <button class="btn btn-espresso w-100" type="submit">Create account</button>
         </form>

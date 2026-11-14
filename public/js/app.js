@@ -11,6 +11,19 @@ document.querySelectorAll('input[data-output]').forEach((input) => {
   });
 });
 
+document.querySelectorAll('[data-password-toggle]').forEach((button) => {
+  const input = document.getElementById(button.dataset.passwordToggle);
+  if (!input) return;
+  const icon = button.querySelector('i');
+  button.addEventListener('click', () => {
+    const show = input.type === 'password';
+    input.type = show ? 'text' : 'password';
+    button.setAttribute('aria-pressed', String(show));
+    button.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+    icon.className = show ? 'bi bi-eye-slash' : 'bi bi-eye';
+  });
+});
+
 // Inline style attributes are blocked by the Content Security Policy, so widths are applied here.
 document.querySelectorAll('.bar-fill[data-width]').forEach((bar) => {
   bar.style.width = `${bar.dataset.width}%`;

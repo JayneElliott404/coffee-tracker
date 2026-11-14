@@ -20,6 +20,17 @@ describe('authentication', () => {
     }
   });
 
+  it('offers a show/hide toggle on every password input', async () => {
+    const agent = await registerAndLogin(app, 'Jayne');
+    for (const [client, url] of [[request(app), '/login'], [request(app), '/register'], [agent, '/account/password']]) {
+      const html = (await client.get(url)).text;
+      const inputs = html.match(/type="password"/g) || [];
+      const toggles = html.match(/data-password-toggle="/g) || [];
+      expect(inputs.length, url).toBeGreaterThan(0);
+      expect(toggles.length, url).toBe(inputs.length);
+    }
+  });
+
   it('serves the health check without a session', async () => {
     const res = await request(app).get('/healthz');
     expect(res.body).toEqual({ ok: true });
