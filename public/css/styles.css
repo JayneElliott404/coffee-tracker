@@ -100,6 +100,22 @@ h1, h2, h3, .h1, .h2, .h3, .display-4, .display-6, .brand-text, .stat-value {
   box-shadow: 0 10px 30px rgba(59, 36, 24, 0.25);
 }
 
+/* Flash messages */
+.alert-cafe {
+  --bs-alert-bg: #efdcc4;
+  --bs-alert-color: var(--espresso);
+  --bs-alert-border-color: var(--crema);
+  --bs-alert-border-radius: 0.75rem;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 600;
+}
+.alert-cafe .bi { color: var(--copper); }
+.alert-cafe-error {
+  --bs-alert-bg: #f6e3dc;
+  --bs-alert-border-color: #d9a79b;
+}
+.alert-cafe-error .bi { color: #9b2c2c; }
+
 /* Score & intensity */
 .score-badge {
   display: inline-flex;
