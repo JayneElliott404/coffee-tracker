@@ -57,7 +57,13 @@ describe('podRules', () => {
 });
 
 describe('registerRules', () => {
-  const valid = { username: 'Jayne@Example.com', password: 'password123', confirmPassword: 'password123' };
+  const valid = { name: 'Jayne', username: 'Jayne@Example.com', password: 'password123', confirmPassword: 'password123' };
+
+  it('requires a name of at most 50 characters', async () => {
+    expect((await validate(registerRules, { ...valid, name: '   ' })).errors.name.msg).toBe('Enter your name');
+    expect((await validate(registerRules, { ...valid, name: undefined })).errors.name).toBeDefined();
+    expect((await validate(registerRules, { ...valid, name: 'x'.repeat(51) })).errors.name).toBeDefined();
+  });
 
   it('accepts and lowercases a valid email address', async () => {
     const { errors, body } = await validate(registerRules, valid);

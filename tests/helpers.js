@@ -40,7 +40,7 @@ export const emailFor = (name) => (name.includes('@') ? name : `${name.toLowerCa
 
 export async function registerAndLogin(app, name, password = PASSWORD) {
   const agent = request.agent(app);
-  const res = await submit(agent, '/register', { username: emailFor(name), password, confirmPassword: password }, '/register');
+  const res = await submit(agent, '/register', { name: name.split('@')[0], username: emailFor(name), password, confirmPassword: password }, '/register');
   expect(res.status).toBe(302);
   return agent;
 }

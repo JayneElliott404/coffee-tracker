@@ -29,24 +29,37 @@ describe('authentication', () => {
   it('registers a user, hashes the password and logs them in', async () => {
     const agent = await registerAndLogin(app, 'Jayne');
     const user = await User.findOne({ username: 'jayne@example.com' });
+    expect(user.name).toBe('Jayne');
     expect(user.passwordHash).not.toBe(PASSWORD);
     expect(user.role).toBe('user');
 
     const res = await agent.get('/pods');
     expect(res.status).toBe(200);
     expect(res.text).toContain('jayne@example.com');
+    expect(res.text).toContain('Welcome to Nespresso Tracker, Jayne!');
+  });
+
+  it('greets returning users by name, falling back to email for accounts without one', async () => {
+    await registerAndLogin(app, 'jayne');
+    const named = await loginAs(app, 'jayne');
+    expect((await named.agent.get('/pods')).text).toContain('Welcome back, jayne!');
+
+    await User.updateOne({ username: 'jayne@example.com' }, { $unset: { name: 1 } });
+    const unnamed = await loginAs(app, 'jayne');
+    expect((await unnamed.agent.get('/pods')).text).toContain('Welcome back, jayne@example.com!');
   });
 
   it('rejects a duplicate email address regardless of case', async () => {
     await registerAndLogin(app, 'jayne');
-    const res = await submit(request.agent(app), '/register', { username: 'JAYNE@example.com', password: PASSWORD, confirmPassword: PASSWORD }, '/register');
+    const res = await submit(request.agent(app), '/register', { name: 'Jayne', username: 'JAYNE@example.com', password: PASSWORD, confirmPassword: PASSWORD }, '/register');
     expect(res.status).toBe(422);
     expect(res.text).toContain('already exists');
   });
 
   it('shows validation errors on registration', async () => {
-    const res = await submit(request.agent(app), '/register', { username: 'a', password: 'x', confirmPassword: 'y' }, '/register');
+    const res = await submit(request.agent(app), '/register', { name: '', username: 'a', password: 'x', confirmPassword: 'y' }, '/register');
     expect(res.status).toBe(422);
+    expect(res.text).toContain('Enter your name');
     expect(res.text).toContain('Enter a valid email address');
     expect(res.text).toContain('Passwords do not match');
   });

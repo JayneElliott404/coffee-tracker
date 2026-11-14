@@ -11,8 +11,13 @@
         <form method="post" action="/register" novalidate>
           <input type="hidden" name="_csrf" value="<%= csrfToken %>">
           <div class="mb-3">
+            <label for="name" class="form-label">Your name</label>
+            <input id="name" name="name" class="form-control<%= errors.name ? ' is-invalid' : '' %>" value="<%= values.name || '' %>" autocomplete="name" required autofocus maxlength="50">
+            <% if (errors.name) { %><div class="invalid-feedback"><%= errors.name.msg %></div><% } %>
+          </div>
+          <div class="mb-3">
             <label for="username" class="form-label">Email address</label>
-            <input id="username" name="username" type="email" class="form-control<%= errors.username ? ' is-invalid' : '' %>" value="<%= values.username || '' %>" autocomplete="username" required autofocus aria-describedby="usernameHelp">
+            <input id="username" name="username" type="email" class="form-control<%= errors.username ? ' is-invalid' : '' %>" value="<%= values.username || '' %>" autocomplete="username" required aria-describedby="usernameHelp">
             <% if (errors.username) { %><div class="invalid-feedback"><%= errors.username.msg %></div><% } %>
             <div id="usernameHelp" class="form-text">You'll use this email address to log in.</div>
           </div>

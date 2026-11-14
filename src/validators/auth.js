@@ -20,6 +20,14 @@ export const usernameRule = body('username')
   .withMessage('Enter a valid email address');
 
 export const registerRules = [
+  body('name')
+    .isString()
+    .trim()
+    .notEmpty()
+    .withMessage('Enter your name')
+    .bail()
+    .isLength({ max: 50 })
+    .withMessage('Name must be 50 characters or fewer'),
   usernameRule,
   passwordRule('password'),
   body('confirmPassword')

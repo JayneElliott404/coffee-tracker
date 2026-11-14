@@ -15,6 +15,8 @@ const userSchema = new mongoose.Schema(
       match: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
     },
     passwordHash: { type: String, required: true },
+    // Not required at the schema level: accounts created before this field existed have no name.
+    name: { type: String, trim: true, maxlength: 50 },
     role: { type: String, enum: ['user', 'admin'], default: 'user' },
     disabled: { type: Boolean, default: false },
     mustChangePassword: { type: Boolean, default: false },
