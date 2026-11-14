@@ -19,7 +19,7 @@
           </div>
           <div class="mb-4">
             <label for="password" class="form-label">Password</label>
-            <input id="password" name="password" type="password" class="form-control" autocomplete="current-password" required>
+            <%- include('../partials/passwordInput', { id: 'password', name: 'password', autocomplete: 'current-password' }) %>
           </div>
           <button class="btn btn-espresso w-100" type="submit">Log in</button>
         </form>
