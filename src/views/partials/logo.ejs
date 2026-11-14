@@ -1,13 +1,50 @@
 <svg class="logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="<%= locals.size || 40 %>" height="<%= locals.size || 40 %>" role="img" aria-label="Nespresso Tracker logo">
-  <circle cx="32" cy="32" r="30" fill="#3b2418" stroke="#c8a27a" stroke-width="2"/>
-  <circle cx="32" cy="32" r="25.5" fill="none" stroke="#c8a27a" stroke-width="0.75" stroke-dasharray="2 2"/>
-  <g fill="none" stroke="#c8a27a" stroke-width="2" stroke-linecap="round">
-    <path d="M24 24c-2-2.5 2-4.5 0-8"/>
-    <path d="M30 23c-2-2.5 2-4.5 0-8"/>
-    <path d="M36 24c-2-2.5 2-4.5 0-8"/>
+  <defs>
+    <linearGradient id="logo-pod-bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4d3022"/>
+      <stop offset="1" stop-color="#241410"/>
+    </linearGradient>
+    <linearGradient id="logo-pod-body" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#6e4325"/>
+      <stop offset="0.3" stop-color="#e2c096"/>
+      <stop offset="0.55" stop-color="#b98757"/>
+      <stop offset="1" stop-color="#5e3820"/>
+    </linearGradient>
+    <linearGradient id="logo-pod-rim" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#d8c3a5"/>
+      <stop offset="0.35" stop-color="#fbf4ea"/>
+      <stop offset="1" stop-color="#c9ae8a"/>
+    </linearGradient>
+    <radialGradient id="logo-pod-lid" cx="0.4" cy="0.4" r="0.7">
+      <stop offset="0" stop-color="#d89a58"/>
+      <stop offset="1" stop-color="#8f531c"/>
+    </radialGradient>
+    <radialGradient id="logo-pod-glow" cx="0.5" cy="0.45" r="0.6">
+      <stop offset="0" stop-color="#7a4d33" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#7a4d33" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <circle cx="32" cy="32" r="30" fill="url(#logo-pod-bg)" stroke="#c8a27a" stroke-width="2"/>
+  <circle cx="32" cy="32" r="26" fill="none" stroke="#c8a27a" stroke-width="0.6" opacity="0.6"/>
+  <circle cx="32" cy="33" r="21" fill="url(#logo-pod-glow)"/>
+  <ellipse cx="32" cy="49.2" rx="14" ry="2" fill="#000" opacity="0.35"/>
+  <path d="M16.5 25L21 43.5Q21.8 46.8 25.5 46.8H38.5Q42.2 46.8 43 43.5L47.5 25z" fill="url(#logo-pod-body)"/>
+  <g stroke="#3b2418" stroke-width="0.6" opacity="0.28" stroke-linecap="round">
+    <path d="M24 28.5l1.6 14.5"/>
+    <path d="M28 29l.9 15"/>
+    <path d="M32 29.2v15.4"/>
+    <path d="M36 29l-.9 15"/>
+    <path d="M40 28.5l-1.6 14.5"/>
   </g>
-  <path d="M42 32h2.5a4.5 4.5 0 0 1 0 9H41" fill="none" stroke="#f5ece1" stroke-width="2.5"/>
-  <path d="M18 29h24v8a10 10 0 0 1-10 10h-4a10 10 0 0 1-10-10z" fill="#f5ece1"/>
-  <ellipse cx="30" cy="29.5" rx="11.5" ry="1.8" fill="#b5651d"/>
-  <ellipse cx="31" cy="49.5" rx="15" ry="2.2" fill="#c8a27a"/>
+  <path d="M20.2 40.4Q32 44.6 43.8 40.4" fill="none" stroke="#3b2418" stroke-width="0.9" opacity="0.45"/>
+  <path d="M20.6 42.2Q32 46.2 43.4 42.2" fill="none" stroke="#f5ece1" stroke-width="0.5" opacity="0.5"/>
+  <path d="M21.5 29l2.4 11" fill="none" stroke="#fff6e8" stroke-width="1.3" stroke-linecap="round" opacity="0.55"/>
+  <ellipse cx="32" cy="25" rx="18.5" ry="4.6" fill="#8a6a4a"/>
+  <ellipse cx="32" cy="24.4" rx="18.5" ry="4.6" fill="url(#logo-pod-rim)"/>
+  <ellipse cx="32" cy="24.4" rx="16" ry="3.7" fill="none" stroke="#a88660" stroke-width="0.6"/>
+  <ellipse cx="32" cy="24.5" rx="14" ry="3.1" fill="#c8a27a"/>
+  <ellipse cx="32" cy="24.6" rx="11.2" ry="2.4" fill="url(#logo-pod-lid)"/>
+  <ellipse cx="32" cy="24.6" rx="7.5" ry="1.5" fill="none" stroke="#5c320f" stroke-width="0.5" opacity="0.6"/>
+  <ellipse cx="32" cy="24.6" rx="1.6" ry="0.55" fill="#3b2418"/>
+  <path d="M19 22.8Q32 19.6 45 22.8" fill="none" stroke="#fff" stroke-width="0.7" stroke-linecap="round" opacity="0.65"/>
 </svg>
