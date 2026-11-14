@@ -31,6 +31,12 @@ describe('authentication', () => {
     }
   });
 
+  it('shows the Buy Me a Coffee button in the footer and lets its script through the CSP', async () => {
+    const res = await request(app).get('/login');
+    expect(res.text).toContain('https://cdnjs.buymeacoffee.com/1.0.0/button.prod.min.js');
+    expect(res.headers['content-security-policy']).toMatch(/script-src [^;]*https:\/\/cdnjs\.buymeacoffee\.com/);
+  });
+
   it('serves the health check without a session', async () => {
     const res = await request(app).get('/healthz');
     expect(res.body).toEqual({ ok: true });
