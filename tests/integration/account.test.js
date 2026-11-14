@@ -40,7 +40,7 @@ describe('change password', () => {
 
   it('forces a password change when mustChangePassword is set', async () => {
     const agent = await registerAndLogin(app, 'jayne');
-    await User.updateOne({ username: 'jayne' }, { mustChangePassword: true });
+    await User.updateOne({ username: 'jayne@example.com' }, { mustChangePassword: true });
 
     for (const url of ['/pods', '/stats', '/pods/new']) {
       const res = await agent.get(url);
@@ -55,6 +55,6 @@ describe('change password', () => {
       '/account/password',
     );
     expect((await agent.get('/pods')).status).toBe(200);
-    expect((await User.findOne({ username: 'jayne' })).mustChangePassword).toBe(false);
+    expect((await User.findOne({ username: 'jayne@example.com' })).mustChangePassword).toBe(false);
   });
 });

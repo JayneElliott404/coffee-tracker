@@ -57,17 +57,20 @@ describe('podRules', () => {
 });
 
 describe('registerRules', () => {
-  const valid = { username: 'Jayne', password: 'password123', confirmPassword: 'password123' };
+  const valid = { username: 'Jayne@Example.com', password: 'password123', confirmPassword: 'password123' };
 
-  it('accepts and lowercases a valid username', async () => {
+  it('accepts and lowercases a valid email address', async () => {
     const { errors, body } = await validate(registerRules, valid);
     expect(errors).toEqual({});
-    expect(body.username).toBe('jayne');
+    expect(body.username).toBe('jayne@example.com');
   });
 
-  it.each(['ab', 'has space', 'semi;colon', 'x'.repeat(31)])('rejects username %j', async (username) => {
-    expect((await validate(registerRules, { ...valid, username })).errors.username).toBeDefined();
-  });
+  it.each(['jayne', 'has space@example.com', 'jayne@', '@example.com', 'jayne@example', `${'x'.repeat(250)}@example.com`])(
+    'rejects %j as an email address',
+    async (username) => {
+      expect((await validate(registerRules, { ...valid, username })).errors.username).toBeDefined();
+    },
+  );
 
   it('rejects short passwords and mismatched confirmation', async () => {
     const { errors } = await validate(registerRules, { ...valid, password: 'short', confirmPassword: 'other' });

@@ -28,26 +28,26 @@ describe('authentication', () => {
 
   it('registers a user, hashes the password and logs them in', async () => {
     const agent = await registerAndLogin(app, 'Jayne');
-    const user = await User.findOne({ username: 'jayne' });
+    const user = await User.findOne({ username: 'jayne@example.com' });
     expect(user.passwordHash).not.toBe(PASSWORD);
     expect(user.role).toBe('user');
 
     const res = await agent.get('/pods');
     expect(res.status).toBe(200);
-    expect(res.text).toContain('jayne');
+    expect(res.text).toContain('jayne@example.com');
   });
 
-  it('rejects a duplicate username', async () => {
+  it('rejects a duplicate email address regardless of case', async () => {
     await registerAndLogin(app, 'jayne');
-    const res = await submit(request.agent(app), '/register', { username: 'JAYNE', password: PASSWORD, confirmPassword: PASSWORD }, '/register');
+    const res = await submit(request.agent(app), '/register', { username: 'JAYNE@example.com', password: PASSWORD, confirmPassword: PASSWORD }, '/register');
     expect(res.status).toBe(422);
-    expect(res.text).toContain('already taken');
+    expect(res.text).toContain('already exists');
   });
 
   it('shows validation errors on registration', async () => {
     const res = await submit(request.agent(app), '/register', { username: 'a', password: 'x', confirmPassword: 'y' }, '/register');
     expect(res.status).toBe(422);
-    expect(res.text).toContain('Username must be 3–30 characters');
+    expect(res.text).toContain('Enter a valid email address');
     expect(res.text).toContain('Passwords do not match');
   });
 
@@ -62,13 +62,13 @@ describe('authentication', () => {
     const unknownUser = await loginAs(app, 'nobody', 'wrong-password');
     expect(wrongPassword.res.status).toBe(401);
     expect(unknownUser.res.status).toBe(401);
-    expect(wrongPassword.res.text).toContain('Incorrect username or password.');
-    expect(unknownUser.res.text).toContain('Incorrect username or password.');
+    expect(wrongPassword.res.text).toContain('Incorrect email or password.');
+    expect(unknownUser.res.text).toContain('Incorrect email or password.');
   });
 
   it('refuses login for disabled accounts', async () => {
     await registerAndLogin(app, 'jayne');
-    await User.updateOne({ username: 'jayne' }, { disabled: true });
+    await User.updateOne({ username: 'jayne@example.com' }, { disabled: true });
     const { res } = await loginAs(app, 'jayne');
     expect(res.status).toBe(401);
     expect(res.text).toContain('disabled');
@@ -84,7 +84,7 @@ describe('authentication', () => {
   it('rejects form posts without a valid CSRF token', async () => {
     const agent = request.agent(app);
     await agent.get('/login');
-    const res = await agent.post('/login').type('form').send({ username: 'jayne', password: PASSWORD });
+    const res = await agent.post('/login').type('form').send({ username: 'jayne@example.com', password: PASSWORD });
     expect(res.status).toBe(403);
     expect(res.text).toContain('Form expired');
   });

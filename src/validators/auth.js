@@ -13,11 +13,11 @@ export const usernameRule = body('username')
   .isString()
   .trim()
   .toLowerCase()
-  .isLength({ min: 3, max: 30 })
-  .withMessage('Username must be 3–30 characters')
+  .isLength({ max: 254 })
+  .withMessage('Email address must be 254 characters or fewer')
   .bail()
-  .matches(/^[a-z0-9_.-]+$/)
-  .withMessage('Username can only contain letters, numbers, dots, dashes and underscores');
+  .isEmail()
+  .withMessage('Enter a valid email address');
 
 export const registerRules = [
   usernameRule,
@@ -28,7 +28,7 @@ export const registerRules = [
 ];
 
 export const loginRules = [
-  body('username').isString().trim().toLowerCase().notEmpty().withMessage('Enter your username'),
+  body('username').isString().trim().toLowerCase().notEmpty().withMessage('Enter your email address'),
   body('password').isString().notEmpty().withMessage('Enter your password'),
 ];
 

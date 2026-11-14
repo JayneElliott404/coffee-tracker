@@ -38,13 +38,13 @@ export function authRouter({ authRateLimit = 10 } = {}) {
         errors: { form: { msg: message } },
       });
 
-    if (!validationResult(req).isEmpty()) return renderError('Enter your username and password.');
+    if (!validationResult(req).isEmpty()) return renderError('Enter your email address and password.');
 
     const { username, password } = matchedData(req);
     const user = await User.findOne({ username });
     const valid = (await bcrypt.compare(password, user?.passwordHash ?? DUMMY_HASH)) && user !== null;
 
-    if (!valid) return renderError('Incorrect username or password.');
+    if (!valid) return renderError('Incorrect email or password.');
     if (user.disabled) return renderError('This account has been disabled. Contact an admin.');
 
     user.lastLoginAt = new Date();
@@ -72,7 +72,7 @@ export function authRouter({ authRateLimit = 10 } = {}) {
     if (!result.isEmpty()) return renderErrors(result.mapped());
 
     const { username, password } = matchedData(req);
-    const taken = { username: { msg: 'That username is already taken' } };
+    const taken = { username: { msg: 'An account with that email address already exists' } };
     if (await User.exists({ username })) return renderErrors(taken);
 
     let user;

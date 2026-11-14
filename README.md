@@ -84,14 +84,14 @@ MongoDB Atlas has a free-forever **M0** tier (512 MB), which is plenty for this 
 
 There is no admin sign-up page; you promote an existing account directly in the database.
 
-1. Register normally in the app (e.g. username `jayne`).
+1. Register normally in the app (e.g. email `jayne@example.com`).
 2. Use **one** of the options below.
 
 **Option A: Atlas web UI**
 
 1. In Atlas go to **Database → Browse Collections**.
 2. Open the `podcafe` database (or `podcafe-dev` locally) → `users` collection.
-3. In the filter box enter `{ "username": "jayne" }` and click **Apply**.
+3. In the filter box enter `{ "username": "jayne@example.com" }` and click **Apply**.
 4. Hover over the document and click the **pencil (Edit)** icon.
 5. Change `role` from `"user"` to `"admin"` and click **Update**.
 
@@ -108,7 +108,7 @@ There is no admin sign-up page; you promote an existing account directly in the 
 
    ```js
    use podcafe
-   db.users.updateOne({ username: "jayne" }, { $set: { role: "admin" } })
+   db.users.updateOne({ username: "jayne@example.com" }, { $set: { role: "admin" } })
    ```
 
    You should see `matchedCount: 1, modifiedCount: 1`.
@@ -200,7 +200,7 @@ tests/
 
 ## Security notes
 
-- Passwords are hashed with bcrypt (cost 12); login responses don't reveal whether a username exists.
+- Passwords are hashed with bcrypt (cost 12); login responses don't reveal whether an email address is registered.
 - Sessions are stored in MongoDB with `HttpOnly`, `SameSite=Lax` and (in production) `Secure` cookies, and are regenerated on login.
 - Every form is protected by a CSRF token; login/register are rate limited.
 - Helmet sets a strict Content Security Policy (no inline scripts); Bootstrap is served locally.
