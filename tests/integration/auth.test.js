@@ -31,6 +31,20 @@ describe('authentication', () => {
     }
   });
 
+  it('shows the Buy Me a Coffee button top right, below the navbar icons when logged in, and lets its script through the CSP', async () => {
+    const script = 'https://cdnjs.buymeacoffee.com/1.0.0/button.prod.min.js';
+    const anonymous = await request(app).get('/login');
+    expect(anonymous.text.split(script).length - 1).toBe(1);
+    expect(anonymous.text.indexOf(script)).toBeLessThan(anonymous.text.indexOf('</nav>'));
+    expect(anonymous.headers['content-security-policy']).toMatch(/script-src [^;]*https:\/\/cdnjs\.buymeacoffee\.com/);
+
+    const agent = await registerAndLogin(app, 'Jayne');
+    const html = (await agent.get('/pods')).text;
+    expect(html.split(script).length - 1).toBe(1);
+    expect(html.indexOf(script)).toBeGreaterThan(html.indexOf('</nav>'));
+    expect(html.indexOf(script)).toBeLessThan(html.indexOf('<main'));
+  });
+
   it('serves the health check without a session', async () => {
     const res = await request(app).get('/healthz');
     expect(res.body).toEqual({ ok: true });

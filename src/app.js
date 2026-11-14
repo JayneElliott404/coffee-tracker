@@ -34,7 +34,9 @@ export function createApp({ authRateLimit } = {}) {
     helmet({
       contentSecurityPolicy: {
         directives: {
-          'style-src': ["'self'", 'https://fonts.googleapis.com'],
+          // Buy Me a Coffee widget: external script, and it writes an inline <style> block.
+          'script-src': ["'self'", 'https://cdnjs.buymeacoffee.com'],
+          'style-src': ["'self'", 'https://fonts.googleapis.com', "'unsafe-inline'"],
           'font-src': ["'self'", 'https://fonts.gstatic.com'],
           'img-src': ["'self'", 'data:'],
           'upgrade-insecure-requests': isProd ? [] : null,

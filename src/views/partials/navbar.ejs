@@ -37,6 +37,14 @@
         </form>
       </div>
     </div>
+    <% } else { %>
+    <div class="ms-auto"><%- include('buyMeCoffee') %></div>
     <% } %>
   </div>
 </nav>
+<% if (user) { %>
+<%# Logged-in users have icons in the top right of the navbar, so the button goes underneath. %>
+<div class="container d-flex justify-content-end pt-2">
+  <%- include('buyMeCoffee') %>
+</div>
+<% } %>
