@@ -126,12 +126,15 @@ describe('pods', () => {
 
   it('searches, filters and sorts', async () => {
     const agent = await registerAndLogin(app, 'jayne');
-    await createPod(agent, { name: 'Ristretto', intensity: '10', score: '6.5', flavour: 'Intense, roasted' });
-    await createPod(agent, { name: 'Volluto', intensity: '4', score: '8.8', flavour: 'Sweet biscuit' });
+    await createPod(agent, { name: 'Ristretto', brand: 'Nespresso', intensity: '10', score: '6.5', flavour: 'Intense, roasted' });
+    await createPod(agent, { name: 'Volluto', brand: 'Starbucks', intensity: '4', score: '8.8', flavour: 'Sweet biscuit' });
     await createPod(agent, { name: 'Kazaar', intensity: '12', score: '7.2', flavour: 'Peppery' });
 
     const names = (text) => [...text.matchAll(/<h2 class="h5 card-title mb-0">([^<]+)<\/h2>/g)].map((m) => m[1]);
 
+    const page = (await agent.get('/pods')).text;
+    expect(page.indexOf('name="brand"')).toBeLessThan(page.indexOf('name="q"'));
+    expect(names((await agent.get('/pods?brand=STAR')).text)).toEqual(['Volluto']);
     expect(names((await agent.get('/pods?q=VOLL')).text)).toEqual(['Volluto']);
     expect(names((await agent.get('/pods?flavour=roast')).text)).toEqual(['Ristretto']);
     expect(names((await agent.get('/pods?minIntensity=10&sort=intensity_asc')).text)).toEqual(['Ristretto', 'Kazaar']);

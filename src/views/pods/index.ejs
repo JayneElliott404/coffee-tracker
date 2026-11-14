@@ -11,11 +11,15 @@
 
 <form class="card card-cafe filter-bar mb-4" method="get" action="/pods" role="search">
   <div class="card-body row g-2 align-items-end">
-    <div class="col-12 col-md-4">
+    <div class="col-12 col-md-2">
+      <label for="brand" class="form-label small mb-1">Brand contains</label>
+      <input id="brand" name="brand" type="search" class="form-control" value="<%= values.brand %>" placeholder="e.g. Nespresso">
+    </div>
+    <div class="col-12 col-md-3">
       <label for="q" class="form-label small mb-1">Search by name</label>
       <input id="q" name="q" type="search" class="form-control" value="<%= values.q %>" placeholder="e.g. Ristretto">
     </div>
-    <div class="col-12 col-md-3">
+    <div class="col-12 col-md-2">
       <label for="flavour" class="form-label small mb-1">Flavour contains</label>
       <input id="flavour" name="flavour" class="form-control" value="<%= values.flavour %>" placeholder="e.g. cocoa">
     </div>
