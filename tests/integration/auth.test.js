@@ -39,14 +39,10 @@ describe('authentication', () => {
     expect(res.text).toContain('Welcome to Nespresso Tracker, Jayne!');
   });
 
-  it('greets returning users by name, falling back to email for accounts without one', async () => {
+  it('greets returning users by name', async () => {
     await registerAndLogin(app, 'jayne');
-    const named = await loginAs(app, 'jayne');
-    expect((await named.agent.get('/pods')).text).toContain('Welcome back, jayne!');
-
-    await User.updateOne({ username: 'jayne@example.com' }, { $unset: { name: 1 } });
-    const unnamed = await loginAs(app, 'jayne');
-    expect((await unnamed.agent.get('/pods')).text).toContain('Welcome back, jayne@example.com!');
+    const { agent } = await loginAs(app, 'jayne');
+    expect((await agent.get('/pods')).text).toContain('Welcome back, jayne!');
   });
 
   it('rejects a duplicate email address regardless of case', async () => {

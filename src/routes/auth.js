@@ -52,7 +52,7 @@ export function authRouter({ authRateLimit = 10 } = {}) {
     await startSession(req, user._id);
 
     if (user.mustChangePassword) return res.redirect('/account/password');
-    req.flash('success', `Welcome back, ${user.name || user.username}!`);
+    req.flash('success', `Welcome back, ${user.name}!`);
     res.redirect('/pods');
   });
 
