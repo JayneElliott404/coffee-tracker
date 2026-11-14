@@ -57,17 +57,26 @@ describe('podRules', () => {
 });
 
 describe('registerRules', () => {
-  const valid = { username: 'Jayne', password: 'password123', confirmPassword: 'password123' };
+  const valid = { name: 'Jayne', username: 'Jayne@Example.com', password: 'password123', confirmPassword: 'password123' };
 
-  it('accepts and lowercases a valid username', async () => {
+  it('requires a name of at most 50 characters', async () => {
+    expect((await validate(registerRules, { ...valid, name: '   ' })).errors.name.msg).toBe('Enter your name');
+    expect((await validate(registerRules, { ...valid, name: undefined })).errors.name).toBeDefined();
+    expect((await validate(registerRules, { ...valid, name: 'x'.repeat(51) })).errors.name).toBeDefined();
+  });
+
+  it('accepts and lowercases a valid email address', async () => {
     const { errors, body } = await validate(registerRules, valid);
     expect(errors).toEqual({});
-    expect(body.username).toBe('jayne');
+    expect(body.username).toBe('jayne@example.com');
   });
 
-  it.each(['ab', 'has space', 'semi;colon', 'x'.repeat(31)])('rejects username %j', async (username) => {
-    expect((await validate(registerRules, { ...valid, username })).errors.username).toBeDefined();
-  });
+  it.each(['jayne', 'has space@example.com', 'jayne@', '@example.com', 'jayne@example', `${'x'.repeat(250)}@example.com`])(
+    'rejects %j as an email address',
+    async (username) => {
+      expect((await validate(registerRules, { ...valid, username })).errors.username).toBeDefined();
+    },
+  );
 
   it('rejects short passwords and mismatched confirmation', async () => {
     const { errors } = await validate(registerRules, { ...valid, password: 'short', confirmPassword: 'other' });

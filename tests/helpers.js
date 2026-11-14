@@ -35,21 +35,24 @@ export async function submit(agent, url, data = {}, page = '/pods/new') {
   return agent.post(url).type('form').send({ ...data, _csrf });
 }
 
-export async function registerAndLogin(app, username, password = PASSWORD) {
+// Accounts are identified by email; tests can pass a short name like 'jayne' for 'jayne@example.com'.
+export const emailFor = (name) => (name.includes('@') ? name : `${name.toLowerCase()}@example.com`);
+
+export async function registerAndLogin(app, name, password = PASSWORD) {
   const agent = request.agent(app);
-  const res = await submit(agent, '/register', { username, password, confirmPassword: password }, '/register');
+  const res = await submit(agent, '/register', { name: name.split('@')[0], username: emailFor(name), password, confirmPassword: password }, '/register');
   expect(res.status).toBe(302);
   return agent;
 }
 
-export async function loginAs(app, username, password = PASSWORD) {
+export async function loginAs(app, name, password = PASSWORD) {
   const agent = request.agent(app);
-  const res = await submit(agent, '/login', { username, password }, '/login');
+  const res = await submit(agent, '/login', { username: emailFor(name), password }, '/login');
   return { agent, res };
 }
 
-export function makeAdmin(username) {
-  return User.updateOne({ username }, { $set: { role: 'admin' } });
+export function makeAdmin(name) {
+  return User.updateOne({ username: emailFor(name) }, { $set: { role: 'admin' } });
 }
 
 export async function createPod(agent, overrides = {}) {

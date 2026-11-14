@@ -2,7 +2,7 @@
 <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
   <h1 class="h2 mb-0"><i class="bi bi-shield-lock me-2 text-copper"></i>Manage users</h1>
   <form class="d-flex gap-2" method="get" action="/admin/users" role="search">
-    <input name="q" type="search" class="form-control" value="<%= q %>" placeholder="Search usernames" aria-label="Search usernames">
+    <input name="q" type="search" class="form-control" value="<%= q %>" placeholder="Search email addresses" aria-label="Search email addresses">
     <button class="btn btn-espresso" type="submit" aria-label="Search"><i class="bi bi-search"></i></button>
   </form>
 </div>
@@ -11,7 +11,7 @@
   <div class="table-responsive">
     <table class="table table-hover align-middle mb-0">
       <thead>
-        <tr><th>Username</th><th>Role</th><th>Status</th><th class="text-end">Pods</th><th>Last login</th><th>Joined</th></tr>
+        <tr><th>Email</th><th>Role</th><th>Status</th><th class="text-end">Pods</th><th>Last login</th><th>Joined</th></tr>
       </thead>
       <tbody>
         <% if (users.length === 0) { %>

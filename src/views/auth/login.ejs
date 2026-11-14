@@ -14,8 +14,8 @@
         <form method="post" action="/login" novalidate>
           <input type="hidden" name="_csrf" value="<%= csrfToken %>">
           <div class="mb-3">
-            <label for="username" class="form-label">Username</label>
-            <input id="username" name="username" class="form-control" value="<%= values.username || '' %>" autocomplete="username" required autofocus>
+            <label for="username" class="form-label">Email address</label>
+            <input id="username" name="username" type="email" class="form-control" value="<%= values.username || '' %>" autocomplete="username" required autofocus>
           </div>
           <div class="mb-4">
             <label for="password" class="form-label">Password</label>

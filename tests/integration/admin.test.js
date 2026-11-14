@@ -16,8 +16,8 @@ async function setup() {
   await createPod(member, { name: 'Member Pod' });
   const admin = await registerAndLogin(app, 'boss');
   await makeAdmin('boss');
-  const target = await User.findOne({ username: 'member' });
-  const self = await User.findOne({ username: 'boss' });
+  const target = await User.findOne({ username: 'member@example.com' });
+  const self = await User.findOne({ username: 'boss@example.com' });
   return { member, admin, target, self };
 }
 
@@ -36,8 +36,8 @@ describe('admin', () => {
     expect(list.text).toContain('boss');
 
     const search = await admin.get('/admin/users?q=mem');
-    expect(search.text).toContain('>member</a>');
-    expect(search.text).not.toContain('>boss</a>');
+    expect(search.text).toContain('>member@example.com</a>');
+    expect(search.text).not.toContain('>boss@example.com</a>');
   });
 
   it("shows a user's pods read-only", async () => {

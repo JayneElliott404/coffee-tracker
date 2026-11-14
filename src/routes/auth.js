@@ -38,13 +38,13 @@ export function authRouter({ authRateLimit = 10 } = {}) {
         errors: { form: { msg: message } },
       });
 
-    if (!validationResult(req).isEmpty()) return renderError('Enter your username and password.');
+    if (!validationResult(req).isEmpty()) return renderError('Enter your email address and password.');
 
     const { username, password } = matchedData(req);
     const user = await User.findOne({ username });
     const valid = (await bcrypt.compare(password, user?.passwordHash ?? DUMMY_HASH)) && user !== null;
 
-    if (!valid) return renderError('Incorrect username or password.');
+    if (!valid) return renderError('Incorrect email or password.');
     if (user.disabled) return renderError('This account has been disabled. Contact an admin.');
 
     user.lastLoginAt = new Date();
@@ -52,7 +52,7 @@ export function authRouter({ authRateLimit = 10 } = {}) {
     await startSession(req, user._id);
 
     if (user.mustChangePassword) return res.redirect('/account/password');
-    req.flash('success', `Welcome back, ${user.username}!`);
+    req.flash('success', `Welcome back, ${user.name}!`);
     res.redirect('/pods');
   });
 
@@ -64,27 +64,27 @@ export function authRouter({ authRateLimit = 10 } = {}) {
     const renderErrors = (errors) =>
       res.status(422).render('auth/register', {
         title: 'Create an account',
-        values: { username: req.body.username },
+        values: { name: req.body.name, username: req.body.username },
         errors,
       });
 
     const result = validationResult(req);
     if (!result.isEmpty()) return renderErrors(result.mapped());
 
-    const { username, password } = matchedData(req);
-    const taken = { username: { msg: 'That username is already taken' } };
+    const { name, username, password } = matchedData(req);
+    const taken = { username: { msg: 'An account with that email address already exists' } };
     if (await User.exists({ username })) return renderErrors(taken);
 
     let user;
     try {
-      user = await User.create({ username, passwordHash: await User.hashPassword(password), lastLoginAt: new Date() });
+      user = await User.create({ name, username, passwordHash: await User.hashPassword(password), lastLoginAt: new Date() });
     } catch (err) {
       if (err.code === 11000) return renderErrors(taken);
       throw err;
     }
 
     await startSession(req, user._id);
-    req.flash('success', `Welcome to Nespresso Tracker, ${user.username}!`);
+    req.flash('success', `Welcome to Nespresso Tracker, ${user.name}!`);
     res.redirect('/pods');
   });
 

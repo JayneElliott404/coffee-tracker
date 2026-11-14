@@ -75,7 +75,7 @@ describe('pods', () => {
 
   it('lets a pod saved before brands existed be viewed and given a brand', async () => {
     const agent = await registerAndLogin(app, 'jayne');
-    const user = await User.findOne({ username: 'jayne' });
+    const user = await User.findOne({ username: 'jayne@example.com' });
     const { insertedId } = await Pod.collection.insertOne({ user: user._id, name: 'Legacy', intensity: 5, score: 7 });
 
     expect((await agent.get('/pods')).text).toContain('Legacy');
