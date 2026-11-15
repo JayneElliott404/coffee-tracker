@@ -38,7 +38,11 @@
       </div>
     </div>
     <% } else { %>
-    <div class="ms-auto"><%- include('buyMeCoffee') %></div>
+    <div class="nav-guest-actions ms-auto d-flex align-items-center gap-2">
+      <a href="/login" class="btn btn-sm btn-outline-light text-nowrap">Log in</a>
+      <a href="/register" class="btn btn-sm btn-crema text-nowrap">Create account</a>
+      <%- include('buyMeCoffee') %>
+    </div>
     <% } %>
   </div>
 </nav>

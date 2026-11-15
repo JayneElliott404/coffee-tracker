@@ -13,7 +13,7 @@ beforeAll(() => {
 
 describe('authentication', () => {
   it('redirects logged-out visitors to the login page', async () => {
-    for (const url of ['/', '/pods', '/stats', '/account', '/account/password', '/admin/users']) {
+    for (const url of ['/pods', '/stats', '/account', '/account/password', '/admin/users']) {
       const res = await request(app).get(url);
       expect(res.status, url).toBe(302);
       expect(res.headers.location, url).toBe('/login');
@@ -142,7 +142,7 @@ describe('authentication', () => {
   it('logs out and ends the session', async () => {
     const agent = await registerAndLogin(app, 'jayne');
     const res = await submit(agent, '/logout');
-    expect(res.headers.location).toBe('/login');
+    expect(res.headers.location).toBe('/');
     expect((await agent.get('/pods')).status).toBe(302);
   });
 

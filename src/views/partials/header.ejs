@@ -4,7 +4,40 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="csrf-token" content="<%= locals.csrfToken || '' %>">
-  <title><%= locals.title ? `${title} · Nespresso Tracker` : 'Nespresso Tracker' %></title>
+<%
+  // Optional SEO locals: fullTitle (replaces the "· Nespresso Tracker" suffix), metaDescription, canonicalPath, ogImage, jsonLd.
+  const pageTitle = locals.fullTitle || (locals.title ? `${title} · Nespresso Tracker` : 'Nespresso Tracker');
+  const origin = locals.baseUrl || '';
+  const canonicalUrl = locals.canonicalPath ? origin + locals.canonicalPath : null;
+  const ogImageUrl = locals.ogImage ? origin + locals.ogImage : null;
+%>
+  <title><%= pageTitle %></title>
+<% if (locals.metaDescription) { %>
+  <meta name="description" content="<%= metaDescription %>">
+<% } %>
+<% if (locals.noindex) { %>
+  <meta name="robots" content="noindex, nofollow">
+<% } %>
+<% if (canonicalUrl) { %>
+  <link rel="canonical" href="<%= canonicalUrl %>">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Nespresso Tracker">
+  <meta property="og:title" content="<%= pageTitle %>">
+  <% if (locals.metaDescription) { %><meta property="og:description" content="<%= metaDescription %>"><% } %>
+  <meta property="og:url" content="<%= canonicalUrl %>">
+  <meta property="og:locale" content="en_GB">
+  <meta name="twitter:card" content="<%= ogImageUrl ? 'summary_large_image' : 'summary' %>">
+  <meta name="twitter:title" content="<%= pageTitle %>">
+  <% if (locals.metaDescription) { %><meta name="twitter:description" content="<%= metaDescription %>"><% } %>
+  <% if (ogImageUrl) { %>
+  <meta property="og:image" content="<%= ogImageUrl %>">
+  <meta name="twitter:image" content="<%= ogImageUrl %>">
+  <% if (locals.ogImageAlt) { %><meta property="og:image:alt" content="<%= ogImageAlt %>"><meta name="twitter:image:alt" content="<%= ogImageAlt %>"><% } %>
+  <% } %>
+<% } %>
+<% if (locals.jsonLd) { %>
+  <script type="application/ld+json"><%- JSON.stringify(jsonLd).replace(/</g, '\\u003c') %></script>
+<% } %>
   <link rel="icon" href="/img/logo.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

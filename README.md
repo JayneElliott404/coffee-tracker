@@ -14,6 +14,7 @@ Built with Node.js 26 LTS, Express 5, EJS, Bootstrap 5 and MongoDB Atlas (via Mo
 - [Run with Docker](#run-with-docker)
 - [Deploy to Render](#deploy-to-render)
 - [Project structure](#project-structure)
+- [SEO](#seo)
 
 ## Run it locally
 
@@ -222,18 +223,26 @@ src/
   server.js            # loads env, connects to MongoDB, starts HTTP server
   app.js               # Express app: security, sessions, CSRF, routes, errors
   config/db.js
-  middleware/          # auth (loadUser, requireAuth, requireAdmin), flash
+  middleware/          # auth (loadUser, requireAuth, requireAdmin), flash, seo (base URL, noindex)
   models/              # User, Pod, EmailToken
-  routes/              # auth, accountRecovery (confirm email, forgot/reset password), pods, stats, account, admin
+  routes/              # home (public homepage, robots.txt, sitemap.xml), auth, accountRecovery (confirm email, forgot/reset password), pods, stats, account, admin
   services/            # email (Resend), emailTokens (issue/consume single-use tokens)
   utils/               # podQuery (search/sort), format helpers
   validators/          # express-validator rules
-  views/               # EJS templates (partials, pods, auth, admin, account)
-public/                # CSS, JS, logo
+  views/               # EJS templates (home, partials, pods, auth, admin, account)
+public/                # CSS, JS, logo, homepage images (credits in img/CREDITS.md)
 tests/
   unit/                # validators, query builder, model/format helpers
-  integration/         # auth, accountRecovery, pods, stats, account, admin (Supertest; Resend is mocked)
+  integration/         # home (SEO), auth, accountRecovery, pods, stats, account, admin (Supertest; Resend is mocked)
 ```
+
+## SEO
+
+- `/` is a public, server-rendered homepage for logged-out visitors (logged-in users are redirected to `/pods`). It sets its own title, meta description, canonical URL, Open Graph/Twitter tags and JSON-LD (`WebSite` and `WebApplication`) in `src/routes/home.js` and `views/partials/header.ejs`.
+- Public pages are listed in `PUBLIC_PATHS` in `src/middleware/seo.js`, which drives `/sitemap.xml`. Add new public pages there.
+- Login, password-reset, account, pod, stats and admin pages (and error pages) are sent with `X-Robots-Tag: noindex, nofollow` and a robots meta tag. `/robots.txt` also disallows the personal areas, but leaves the auth pages crawlable so search engines can see their `noindex`.
+- Canonical and sitemap URLs are built from `APP_URL`, so set it to the public address in production.
+- Homepage photos are from Pexels (free licence) and stored as responsive WebP; see `public/img/CREDITS.md`.
 
 ## Security notes
 

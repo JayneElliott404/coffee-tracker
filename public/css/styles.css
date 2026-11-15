@@ -39,6 +39,11 @@ h1, h2, h3, .h1, .h2, .h3, .display-4, .display-6, .brand-text, .stat-value {
 .brand-text { font-size: 1.5rem; color: var(--latte); letter-spacing: 0.02em; }
 .brand-small { font-size: 0.9rem; font-style: italic; color: var(--crema); }
 .footer-cafe { background: var(--espresso-dark); color: rgba(245, 236, 225, 0.75); }
+/* Logged-out navbar actions drop onto their own row on phones so nothing overflows. */
+.nav-guest-actions { flex-wrap: wrap; justify-content: flex-end; width: 100%; padding-bottom: 0.5rem; }
+@media (min-width: 576px) {
+  .nav-guest-actions { flex-wrap: nowrap; width: auto; padding-bottom: 0; }
+}
 
 /* Buttons */
 .btn-espresso {
@@ -98,6 +103,52 @@ h1, h2, h3, .h1, .h2, .h3, .display-4, .display-6, .brand-text, .stat-value {
     radial-gradient(circle at 90% 20%, rgba(200, 162, 122, 0.35) 0, transparent 35%),
     linear-gradient(135deg, var(--espresso-dark), var(--espresso) 60%, #5a3826);
   box-shadow: 0 10px 30px rgba(59, 36, 24, 0.25);
+}
+
+/* Home page */
+.home-hero-img {
+  width: 100%;
+  max-width: 400px;
+  height: auto;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+}
+.feature-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  background: var(--espresso);
+  color: var(--crema);
+  font-size: 1.4rem;
+}
+.step-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background: var(--copper);
+  color: #fff;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+.cta-band {
+  color: var(--latte);
+  background: linear-gradient(135deg, var(--espresso-dark), var(--espresso));
+  box-shadow: 0 10px 30px rgba(59, 36, 24, 0.25);
+}
+.cta-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 220px;
+  object-fit: cover;
 }
 
 /* Flash messages */

@@ -66,7 +66,13 @@ export function authRouter({ authRateLimit = 10 } = {}) {
   });
 
   router.get('/register', redirectIfLoggedIn, (req, res) => {
-    res.render('auth/register', { title: 'Create an account', values: {}, errors: {} });
+    res.render('auth/register', {
+      title: 'Create an account',
+      metaDescription: 'Create a free Nespresso Tracker account to record the coffee pods you have tried, rate your favourites and keep tasting notes.',
+      canonicalPath: '/register',
+      values: {},
+      errors: {},
+    });
   });
 
   router.post('/register', limiter, redirectIfLoggedIn, registerRules, async (req, res) => {
@@ -101,7 +107,7 @@ export function authRouter({ authRateLimit = 10 } = {}) {
     req.session.destroy((err) => {
       if (err) return next(err);
       res.clearCookie('nespresso-tracker.sid');
-      res.redirect('/login');
+      res.redirect('/');
     });
   });
 
