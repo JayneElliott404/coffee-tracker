@@ -22,6 +22,9 @@ const userSchema = new mongoose.Schema(
     role: { type: String, enum: ['user', 'admin'], default: 'user' },
     disabled: { type: Boolean, default: false },
     mustChangePassword: { type: Boolean, default: false },
+    // Accounts created before email confirmation existed have no value, so they read back as unconfirmed.
+    emailConfirmed: { type: Boolean, default: false },
+    emailConfirmedAt: Date,
     lastLoginAt: Date,
   },
   { timestamps: true },

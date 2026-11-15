@@ -42,6 +42,15 @@ export const loginRules = [
   body('password').isString().notEmpty().withMessage('Enter your password'),
 ];
 
+export const emailOnlyRules = [usernameRule];
+
+export const resetPasswordRules = [
+  passwordRule('password'),
+  body('confirmPassword')
+    .custom((value, { req }) => value === req.body.password)
+    .withMessage('Passwords do not match'),
+];
+
 export const changePasswordRules = [
   body('currentPassword').isString().notEmpty().withMessage('Enter your current password'),
   passwordRule('newPassword').custom((value, { req }) => value !== req.body.currentPassword)
