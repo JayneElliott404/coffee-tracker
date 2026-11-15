@@ -1,5 +1,6 @@
 import bcrypt from 'bcryptjs';
 import mongoose from 'mongoose';
+import { DEFAULT_MACHINE, MACHINE_TYPES } from '../utils/machine.js';
 
 const BCRYPT_ROUNDS = 12;
 
@@ -16,6 +17,8 @@ const userSchema = new mongoose.Schema(
     },
     passwordHash: { type: String, required: true },
     name: { type: String, required: true, trim: true, maxlength: 50 },
+    // Accounts created before machine types existed read back as the default without a migration.
+    machineType: { type: String, enum: MACHINE_TYPES, default: DEFAULT_MACHINE },
     role: { type: String, enum: ['user', 'admin'], default: 'user' },
     disabled: { type: Boolean, default: false },
     mustChangePassword: { type: Boolean, default: false },

@@ -13,7 +13,7 @@ beforeAll(() => {
 
 describe('authentication', () => {
   it('redirects logged-out visitors to the login page', async () => {
-    for (const url of ['/', '/pods', '/stats', '/account/password', '/admin/users']) {
+    for (const url of ['/', '/pods', '/stats', '/account', '/account/password', '/admin/users']) {
       const res = await request(app).get(url);
       expect(res.status, url).toBe(302);
       expect(res.headers.location, url).toBe('/login');
@@ -22,7 +22,7 @@ describe('authentication', () => {
 
   it('offers a show/hide toggle on every password input', async () => {
     const agent = await registerAndLogin(app, 'Jayne');
-    for (const [client, url] of [[request(app), '/login'], [request(app), '/register'], [agent, '/account/password']]) {
+    for (const [client, url] of [[request(app), '/login'], [request(app), '/register'], [agent, '/account']]) {
       const html = (await client.get(url)).text;
       const inputs = html.match(/type="password"/g) || [];
       const toggles = html.match(/data-password-toggle="/g) || [];
@@ -62,6 +62,24 @@ describe('authentication', () => {
     expect(res.status).toBe(200);
     expect(res.text).toContain('jayne@example.com');
     expect(res.text).toContain('Welcome to Nespresso Tracker, Jayne!');
+  });
+
+  it('lets a new user choose Original or Vertuo, defaulting to Original', async () => {
+    const form = (await request(app).get('/register')).text;
+    expect(form).toMatch(/name="machineType"[^>]*value="original"[^>]*checked/);
+    expect(form).toContain('value="vertuo"');
+
+    await registerAndLogin(app, 'vera', PASSWORD, 'vertuo');
+    await registerAndLogin(app, 'orla');
+    expect((await User.findOne({ username: 'vera@example.com' })).machineType).toBe('vertuo');
+    expect((await User.findOne({ username: 'orla@example.com' })).machineType).toBe('original');
+  });
+
+  it('rejects an unknown machine on registration and keeps the other input', async () => {
+    const res = await submit(request.agent(app), '/register', { name: 'Jayne', username: 'jayne@example.com', password: PASSWORD, confirmPassword: PASSWORD, machineType: 'moka' }, '/register');
+    expect(res.status).toBe(422);
+    expect(res.text).toContain('Choose Original or Vertuo');
+    expect(await User.countDocuments()).toBe(0);
   });
 
   it('greets returning users by name', async () => {

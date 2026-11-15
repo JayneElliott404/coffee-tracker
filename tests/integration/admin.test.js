@@ -107,7 +107,7 @@ describe('admin', () => {
     expect(stored.mustChangePassword).toBe(true);
 
     const { agent, res: login } = await loginAs(app, 'member', tempPassword);
-    expect(login.headers.location).toBe('/account/password');
-    expect((await agent.get('/pods')).headers.location).toBe('/account/password');
+    expect(login.headers.location).toBe('/account');
+    expect((await agent.get('/pods')).headers.location).toBe('/account');
   });
 });

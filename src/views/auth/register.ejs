@@ -22,6 +22,10 @@
             <div id="usernameHelp" class="form-text">You'll use this email address to log in.</div>
           </div>
           <div class="mb-3">
+            <span class="form-label d-block">Which machine do you own?</span>
+            <%- include('../partials/machineToggle', { idPrefix: 'machineType', selected: values.machineType || 'original', error: errors.machineType }) %>
+          </div>
+          <div class="mb-3">
             <label for="password" class="form-label">Password</label>
             <%- include('../partials/passwordInput', { id: 'password', name: 'password', autocomplete: 'new-password', minlength: 8, error: errors.password }) %>
           </div>

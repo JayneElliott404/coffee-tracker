@@ -2,7 +2,7 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import { createApp } from '../../src/app.js';
 import { Pod } from '../../src/models/Pod.js';
 import { User } from '../../src/models/User.js';
-import { createPod, registerAndLogin, setupTestDb, submit } from '../helpers.js';
+import { createPod, PASSWORD, registerAndLogin, setupTestDb, submit } from '../helpers.js';
 
 setupTestDb();
 
@@ -86,6 +86,45 @@ describe('pods', () => {
     const updated = await Pod.findById(insertedId);
     expect(updated.brand).toBe('Starbucks');
     expect(updated.name).toBe('Legacy');
+  });
+
+  it('defaults new pods to the account machine, lets it be overridden, and can update it later', async () => {
+    const agent = await registerAndLogin(app, 'jayne', PASSWORD, 'vertuo');
+    await createPod(agent, { name: 'Default one' });
+    await createPod(agent, { name: 'Override one', machineType: 'original' });
+    expect((await Pod.findOne({ name: 'Default one' })).machineType).toBe('vertuo');
+    const override = await Pod.findOne({ name: 'Override one' });
+    expect(override.machineType).toBe('original');
+
+    const form = (await agent.get(`/pods/${override._id}/edit`)).text;
+    expect(form).toMatch(/value="original" autocomplete="off" checked/);
+
+    const res = await submit(agent, `/pods/${override._id}`, { name: 'Override one', intensity: '9', score: '8', machineType: 'vertuo' });
+    expect(res.status).toBe(302);
+    expect((await Pod.findById(override._id)).machineType).toBe('vertuo');
+    expect((await agent.get('/pods')).text).toContain('Vertuo');
+  });
+
+  it('rejects an unknown machine on a pod', async () => {
+    const agent = await registerAndLogin(app, 'jayne');
+    const res = await createPod(agent, { machineType: 'moka' });
+    expect(res.status).toBe(422);
+    expect(res.text).toContain('Choose Original or Vertuo');
+    expect(await Pod.countDocuments()).toBe(0);
+  });
+
+  it('shows pods saved before machine types existed as Original and keeps that when edited without a machine', async () => {
+    const agent = await registerAndLogin(app, 'jayne', PASSWORD, 'vertuo');
+    const user = await User.findOne({ username: 'jayne@example.com' });
+    const { insertedId } = await Pod.collection.insertOne({ user: user._id, name: 'Legacy', intensity: 5, score: 7 });
+
+    expect((await agent.get('/pods')).text).toContain('Original');
+    expect((await agent.get(`/pods/${insertedId}/edit`)).text).toMatch(/value="original" autocomplete="off" checked/);
+
+    await submit(agent, `/pods/${insertedId}`, { name: 'Legacy', intensity: '5', score: '7' });
+    expect((await Pod.collection.findOne({ _id: insertedId })).machineType).toBe('original');
+    await submit(agent, `/pods/${insertedId}`, { name: 'Legacy', intensity: '5', score: '7', machineType: 'vertuo' });
+    expect((await Pod.findById(insertedId)).machineType).toBe('vertuo');
   });
 
   it('shows validation errors when editing', async () => {

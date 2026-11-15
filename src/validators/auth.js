@@ -1,4 +1,5 @@
 import { body } from 'express-validator';
+import { machineTypeRule } from './machine.js';
 
 // bcrypt only uses the first 72 bytes of a password.
 const passwordRule = (field) =>
@@ -33,6 +34,7 @@ export const registerRules = [
   body('confirmPassword')
     .custom((value, { req }) => value === req.body.password)
     .withMessage('Passwords do not match'),
+  machineTypeRule,
 ];
 
 export const loginRules = [
