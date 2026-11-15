@@ -2,7 +2,7 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import request from 'supertest';
 import { createApp } from '../../src/app.js';
 import { User } from '../../src/models/User.js';
-import { loginAs, PASSWORD, registerAndLogin, setupTestDb, submit } from '../helpers.js';
+import { loginAs, PASSWORD, registerAndLogin, registerUnconfirmed, setupTestDb, submit, waitForEmail } from '../helpers.js';
 
 setupTestDb();
 
@@ -59,16 +59,22 @@ describe('authentication', () => {
     expect(res.headers['set-cookie']).toBeUndefined();
   });
 
-  it('registers a user, hashes the password and logs them in', async () => {
-    const agent = await registerAndLogin(app, 'Jayne');
+  it('registers a user, hashes the password and asks them to confirm their email before logging in', async () => {
+    const agent = await registerUnconfirmed(app, 'Jayne');
     const user = await User.findOne({ username: 'jayne@example.com' });
     expect(user.name).toBe('Jayne');
     expect(user.passwordHash).not.toBe(PASSWORD);
     expect(user.role).toBe('user');
+    expect(user.emailConfirmed).toBe(false);
 
-    const res = await agent.get('/pods');
-    expect(res.status).toBe(200);
-    expect(res.text).toContain('Welcome to Nespresso Tracker, Jayne!');
+    expect((await agent.get('/pods')).headers.location).toBe('/login');
+    expect((await agent.get('/login')).text).toContain('emailed you a link to confirm');
+    expect((await waitForEmail()).to).toBe('jayne@example.com');
+  });
+
+  it('welcomes a confirmed user on their first login', async () => {
+    const agent = await registerAndLogin(app, 'Jayne');
+    expect((await agent.get('/pods')).status).toBe(200);
   });
 
   it('lets a new user choose Original or Vertuo, defaulting to Original', async () => {

@@ -4,6 +4,7 @@ import { rateLimit } from 'express-rate-limit';
 import { matchedData, validationResult } from 'express-validator';
 import { User } from '../models/User.js';
 import { redirectIfLoggedIn, startSession } from '../middleware/auth.js';
+import { sendConfirmation } from '../services/email.js';
 import { loginRules, registerRules } from '../validators/auth.js';
 
 // Compared against when the username doesn't exist so response timing doesn't reveal valid usernames.
@@ -46,6 +47,14 @@ export function authRouter({ authRateLimit = 10 } = {}) {
 
     if (!valid) return renderError('Incorrect email or password.');
     if (user.disabled) return renderError('This account has been disabled. Contact an admin.');
+    if (!user.emailConfirmed) {
+      await sendConfirmation(user);
+      return res.status(403).render('auth/login', {
+        title: 'Log in',
+        values: { username },
+        errors: { form: { msg: 'Please confirm your email address before logging in. We have sent you a confirmation link.', resend: true } },
+      });
+    }
 
     user.lastLoginAt = new Date();
     await user.save();
@@ -83,9 +92,9 @@ export function authRouter({ authRateLimit = 10 } = {}) {
       throw err;
     }
 
-    await startSession(req, user._id);
-    req.flash('success', `Welcome to Nespresso Tracker, ${user.name}!`);
-    res.redirect('/pods');
+    await sendConfirmation(user);
+    req.flash('success', `Thanks, ${user.name}! We've emailed you a link to confirm your email address. Please confirm it, then log in.`);
+    res.redirect('/login');
   });
 
   router.post('/logout', (req, res, next) => {

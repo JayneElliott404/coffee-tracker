@@ -10,6 +10,7 @@ import { doubleCsrf } from 'csrf-csrf';
 import { loadUser } from './middleware/auth.js';
 import { flash } from './middleware/flash.js';
 import { accountRouter } from './routes/account.js';
+import { accountRecoveryRouter } from './routes/accountRecovery.js';
 import { adminRouter } from './routes/admin.js';
 import { authRouter } from './routes/auth.js';
 import { podsRouter } from './routes/pods.js';
@@ -24,6 +25,8 @@ export function createApp({ authRateLimit } = {}) {
   const isProd = process.env.NODE_ENV === 'production';
   const secret = process.env.SESSION_SECRET;
   if (!secret) throw new Error('SESSION_SECRET is not set. Copy .env.example to .env and fill it in.');
+  if (isProd && !process.env.RESEND_API_KEY) throw new Error('RESEND_API_KEY is not set. Emails cannot be sent without it.');
+  if (isProd && !process.env.APP_URL) throw new Error('APP_URL is not set. It is used to build the links in emails.');
 
   const app = express();
   app.set('views', path.join(srcDir, 'views'));
@@ -90,6 +93,7 @@ export function createApp({ authRateLimit } = {}) {
 
   app.get('/', (req, res) => res.redirect(req.user ? '/pods' : '/login'));
   app.use(authRouter({ authRateLimit }));
+  app.use(accountRecoveryRouter({ authRateLimit }));
   app.use('/pods', podsRouter());
   app.use('/stats', statsRouter());
   app.use('/account', accountRouter());

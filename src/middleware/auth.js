@@ -1,4 +1,5 @@
 import { User } from '../models/User.js';
+import { sendConfirmation } from '../services/email.js';
 
 const PASSWORD_CHANGE_ALLOWED = new Set(['/account', '/account/password', '/logout']);
 
@@ -9,9 +10,15 @@ export async function loadUser(req, res, next) {
   if (!userId) return next();
 
   const user = await User.findById(userId);
-  if (!user || user.disabled) {
+  if (!user || user.disabled || !user.emailConfirmed) {
     delete req.session.userId;
-    req.flash('error', user ? 'Your account has been disabled.' : 'Please log in again.');
+    // Covers accounts that existed before email confirmation was introduced.
+    if (user && !user.disabled) {
+      req.flash('error', 'Please confirm your email address to keep using Nespresso Tracker. We have emailed you a link.');
+      await sendConfirmation(user);
+    } else {
+      req.flash('error', user ? 'Your account has been disabled.' : 'Please log in again.');
+    }
     return next();
   }
 
