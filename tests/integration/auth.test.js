@@ -45,6 +45,14 @@ describe('authentication', () => {
     expect(html.indexOf(script)).toBeLessThan(html.indexOf('<main'));
   });
 
+  it("shows the user's name rather than their email address in the navbar", async () => {
+    const agent = await registerAndLogin(app, 'Jayne');
+    const html = (await agent.get('/pods')).text;
+    const navbar = html.slice(html.indexOf('<nav'), html.indexOf('</nav>'));
+    expect(navbar).toContain('</i>Jayne</span>');
+    expect(navbar).not.toContain('jayne@example.com');
+  });
+
   it('serves the health check without a session', async () => {
     const res = await request(app).get('/healthz');
     expect(res.body).toEqual({ ok: true });
@@ -60,7 +68,6 @@ describe('authentication', () => {
 
     const res = await agent.get('/pods');
     expect(res.status).toBe(200);
-    expect(res.text).toContain('jayne@example.com');
     expect(res.text).toContain('Welcome to Nespresso Tracker, Jayne!');
   });
 
