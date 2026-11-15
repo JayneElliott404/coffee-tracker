@@ -15,6 +15,7 @@ import { authRouter } from './routes/auth.js';
 import { podsRouter } from './routes/pods.js';
 import { statsRouter } from './routes/stats.js';
 import { formatDate, formatScore, podLabel, scoreClass, toDateInput } from './utils/format.js';
+import { MACHINE_TYPES, machineLabel } from './utils/machine.js';
 
 const srcDir = path.dirname(fileURLToPath(import.meta.url));
 const rootDir = path.join(srcDir, '..');
@@ -81,7 +82,7 @@ export function createApp({ authRateLimit } = {}) {
     res.locals.csrfToken = generateCsrfToken(req, res);
     res.locals.path = req.path;
     res.locals.getFlash = (type) => req.flash(type);
-    Object.assign(res.locals, { formatDate, formatScore, podLabel, scoreClass, toDateInput });
+    Object.assign(res.locals, { formatDate, formatScore, podLabel, scoreClass, toDateInput, MACHINE_TYPES, machineLabel });
     next();
   });
   app.use(loadUser);

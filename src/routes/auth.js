@@ -51,7 +51,7 @@ export function authRouter({ authRateLimit = 10 } = {}) {
     await user.save();
     await startSession(req, user._id);
 
-    if (user.mustChangePassword) return res.redirect('/account/password');
+    if (user.mustChangePassword) return res.redirect('/account');
     req.flash('success', `Welcome back, ${user.name}!`);
     res.redirect('/pods');
   });
@@ -64,20 +64,20 @@ export function authRouter({ authRateLimit = 10 } = {}) {
     const renderErrors = (errors) =>
       res.status(422).render('auth/register', {
         title: 'Create an account',
-        values: { name: req.body.name, username: req.body.username },
+        values: { name: req.body.name, username: req.body.username, machineType: req.body.machineType },
         errors,
       });
 
     const result = validationResult(req);
     if (!result.isEmpty()) return renderErrors(result.mapped());
 
-    const { name, username, password } = matchedData(req);
+    const { name, username, password, machineType } = matchedData(req);
     const taken = { username: { msg: 'An account with that email address already exists' } };
     if (await User.exists({ username })) return renderErrors(taken);
 
     let user;
     try {
-      user = await User.create({ name, username, passwordHash: await User.hashPassword(password), lastLoginAt: new Date() });
+      user = await User.create({ name, username, machineType, passwordHash: await User.hashPassword(password), lastLoginAt: new Date() });
     } catch (err) {
       if (err.code === 11000) return renderErrors(taken);
       throw err;

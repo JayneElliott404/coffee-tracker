@@ -38,9 +38,9 @@ export async function submit(agent, url, data = {}, page = '/pods/new') {
 // Accounts are identified by email; tests can pass a short name like 'jayne' for 'jayne@example.com'.
 export const emailFor = (name) => (name.includes('@') ? name : `${name.toLowerCase()}@example.com`);
 
-export async function registerAndLogin(app, name, password = PASSWORD) {
+export async function registerAndLogin(app, name, password = PASSWORD, machineType) {
   const agent = request.agent(app);
-  const res = await submit(agent, '/register', { name: name.split('@')[0], username: emailFor(name), password, confirmPassword: password }, '/register');
+  const res = await submit(agent, '/register', { name: name.split('@')[0], username: emailFor(name), password, confirmPassword: password, machineType }, '/register');
   expect(res.status).toBe(302);
   return agent;
 }

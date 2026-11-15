@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { DEFAULT_MACHINE, MACHINE_TYPES } from '../utils/machine.js';
 
 export const MIN_INTENSITY = 1;
 export const MAX_INTENSITY = 13;
@@ -18,6 +19,8 @@ const podSchema = new mongoose.Schema(
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true, index: true },
     // Optional so pods created before brands existed stay valid without a migration.
     brand: { type: String, trim: true, maxlength: 100, default: '' },
+    // Pods created before machine types existed read back as the default without a migration.
+    machineType: { type: String, enum: MACHINE_TYPES, default: DEFAULT_MACHINE },
     name: { type: String, required: true, trim: true, maxlength: 100 },
     intensity: {
       type: Number,

@@ -5,6 +5,7 @@ import { Pod } from '../models/Pod.js';
 import { requireAuth } from '../middleware/auth.js';
 import { buildPodQuery, SORT_OPTIONS } from '../utils/podQuery.js';
 import { podRules } from '../validators/pod.js';
+import { MACHINE_TYPES } from '../utils/machine.js';
 
 function findOwnedPod(req) {
   if (!mongoose.isValidObjectId(req.params.id)) return null;
@@ -16,6 +17,7 @@ function renderForm(res, { pod, errors = {}, status = 200 }) {
   res.status(status).render('pods/form', {
     title: isEdit ? `Edit ${pod.name}` : 'Add a pod',
     pod,
+    machineType: MACHINE_TYPES.includes(pod.machineType) ? pod.machineType : res.req.user.machineType,
     errors,
     action: isEdit ? `/pods/${pod._id}` : '/pods',
   });
@@ -43,7 +45,7 @@ export function podsRouter() {
     if (!result.isEmpty()) {
       return renderForm(res, { pod: req.body, errors: result.mapped(), status: 422 });
     }
-    const pod = await Pod.create({ ...matchedData(req), user: req.user._id });
+    const pod = await Pod.create({ machineType: req.user.machineType, ...matchedData(req), user: req.user._id });
     req.flash('success', `Added ${pod.name}.`);
     res.redirect('/pods');
   });

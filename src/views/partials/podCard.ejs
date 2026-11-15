@@ -8,6 +8,7 @@
         <h2 class="h5 card-title mb-0"><%= pod.name %></h2>
         <span class="score-badge <%= scoreClass(pod.score) %>" title="Score out of 10"><%= formatScore(pod.score) %></span>
       </div>
+      <p class="small mb-2"><span class="badge text-bg-light border"><i class="bi bi-cup-straw me-1"></i><%= machineLabel(pod.machineType) %></span></p>
       <div class="intensity mb-2" role="img" aria-label="Intensity <%= pod.intensity %> of 13">
         <% for (let i = 1; i <= 13; i++) { %><span class="bean<%= i <= pod.intensity ? ' filled' : '' %>"></span><% } %>
         <span class="small text-muted ms-1">Intensity <%= pod.intensity %></span>

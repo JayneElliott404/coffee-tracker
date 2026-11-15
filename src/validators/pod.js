@@ -1,7 +1,9 @@
 import { body } from 'express-validator';
 import { MAX_INTENSITY, MAX_SCORE, MIN_INTENSITY, MIN_SCORE } from '../models/Pod.js';
+import { machineTypeRule } from './machine.js';
 
 export const podRules = [
+  machineTypeRule,
   body('brand')
     .default('')
     .isString()

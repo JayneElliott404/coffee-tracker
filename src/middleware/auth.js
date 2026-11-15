@@ -1,6 +1,6 @@
 import { User } from '../models/User.js';
 
-const PASSWORD_CHANGE_ALLOWED = new Set(['/account/password', '/logout']);
+const PASSWORD_CHANGE_ALLOWED = new Set(['/account', '/account/password', '/logout']);
 
 // Reloaded on every request so role changes, disables and deletions take effect immediately.
 export async function loadUser(req, res, next) {
@@ -19,7 +19,7 @@ export async function loadUser(req, res, next) {
   res.locals.currentUser = user;
 
   if (user.mustChangePassword && !PASSWORD_CHANGE_ALLOWED.has(req.path)) {
-    return res.redirect('/account/password');
+    return res.redirect('/account');
   }
   next();
 }

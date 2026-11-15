@@ -1,0 +1,50 @@
+<%- include('../partials/header') %>
+<div class="row justify-content-center">
+  <div class="col-sm-10 col-md-7 col-lg-5">
+    <h1 class="h3 mb-3"><i class="bi bi-gear me-2 text-copper"></i>Account settings</h1>
+    <% if (forced) { %>
+    <div class="alert alert-warning" role="alert">
+      An admin has given you a temporary password. Please choose a new one to continue.
+    </div>
+    <% } %>
+
+    <% if (!forced) { %>
+    <div class="card card-cafe mb-4">
+      <div class="card-body p-4">
+        <h2 class="h5 mb-1">Default machine</h2>
+        <p class="text-muted small">New pods start with this machine selected. You can change it on any pod.</p>
+        <form method="post" action="/account/machine" novalidate>
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <div class="mb-3">
+            <%- include('../partials/machineToggle', { idPrefix: 'machineType', selected: machineType, error: errors.machineType }) %>
+          </div>
+          <button class="btn btn-espresso w-100" type="submit">Save default machine</button>
+        </form>
+      </div>
+    </div>
+    <% } %>
+
+    <div class="card card-cafe">
+      <div class="card-body p-4">
+        <h2 class="h5 mb-3"><i class="bi bi-key me-2 text-copper"></i>Change password</h2>
+        <form method="post" action="/account/password" novalidate>
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <div class="mb-3">
+            <label for="currentPassword" class="form-label"><%= forced ? 'Temporary password' : 'Current password' %></label>
+            <%- include('../partials/passwordInput', { id: 'currentPassword', name: 'currentPassword', autocomplete: 'current-password', autofocus: forced, error: errors.currentPassword }) %>
+          </div>
+          <div class="mb-3">
+            <label for="newPassword" class="form-label">New password</label>
+            <%- include('../partials/passwordInput', { id: 'newPassword', name: 'newPassword', autocomplete: 'new-password', minlength: 8, error: errors.newPassword }) %>
+          </div>
+          <div class="mb-4">
+            <label for="confirmPassword" class="form-label">Confirm new password</label>
+            <%- include('../partials/passwordInput', { id: 'confirmPassword', name: 'confirmPassword', autocomplete: 'new-password', error: errors.confirmPassword }) %>
+          </div>
+          <button class="btn btn-espresso w-100" type="submit">Update password</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<%- include('../partials/footer') %>

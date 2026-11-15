@@ -1,0 +1,8 @@
+<%# Segmented Original/Vertuo toggle. Expects: idPrefix, selected, optional error. %>
+<div class="btn-group w-100<%= locals.error ? ' is-invalid' : '' %>" role="group" aria-label="Machine type">
+  <% for (const type of MACHINE_TYPES) { %>
+  <input type="radio" class="btn-check" name="machineType" id="<%= idPrefix %>-<%= type %>" value="<%= type %>" autocomplete="off"<%= selected === type ? ' checked' : '' %>>
+  <label class="btn btn-outline-espresso" for="<%= idPrefix %>-<%= type %>"><%= machineLabel(type) %></label>
+  <% } %>
+</div>
+<% if (locals.error) { %><div class="invalid-feedback d-block"><%= error.msg %></div><% } %>
