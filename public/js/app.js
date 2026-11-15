@@ -24,6 +24,13 @@ document.querySelectorAll('[data-password-toggle]').forEach((button) => {
   });
 });
 
+// The native cross on a search input fires "search" with an empty value; re-run the query with the remaining filters.
+document.querySelectorAll('form[role="search"] input[type="search"]').forEach((input) => {
+  input.addEventListener('search', () => {
+    if (input.value === '') input.form.requestSubmit();
+  });
+});
+
 // Inline style attributes are blocked by the Content Security Policy, so widths are applied here.
 document.querySelectorAll('.bar-fill[data-width]').forEach((bar) => {
   bar.style.width = `${bar.dataset.width}%`;
