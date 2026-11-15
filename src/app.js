@@ -9,6 +9,8 @@ import helmet from 'helmet';
 import { doubleCsrf } from 'csrf-csrf';
 import { loadUser } from './middleware/auth.js';
 import { flash } from './middleware/flash.js';
+import { noindex, seo } from './middleware/seo.js';
+import { homeRouter, crawlerFilesRouter } from './routes/home.js';
 import { accountRouter } from './routes/account.js';
 import { accountRecoveryRouter } from './routes/accountRecovery.js';
 import { adminRouter } from './routes/admin.js';
@@ -53,6 +55,7 @@ export function createApp({ authRateLimit } = {}) {
   app.use('/vendor/bootstrap', express.static(path.join(rootDir, 'node_modules/bootstrap/dist')));
   app.use('/vendor/bootstrap-icons', express.static(path.join(rootDir, 'node_modules/bootstrap-icons/font')));
   app.get('/healthz', (req, res) => res.json({ ok: true }));
+  app.use(crawlerFilesRouter());
 
   app.use(express.urlencoded({ extended: false, limit: '20kb' }));
   app.use(cookieParser());
@@ -88,10 +91,11 @@ export function createApp({ authRateLimit } = {}) {
     Object.assign(res.locals, { formatDate, formatScore, podLabel, scoreClass, toDateInput, MACHINE_TYPES, machineLabel });
     next();
   });
+  app.use(seo);
   app.use(loadUser);
   app.use(doubleCsrfProtection);
 
-  app.get('/', (req, res) => res.redirect(req.user ? '/pods' : '/login'));
+  app.use(homeRouter());
   app.use(authRouter({ authRateLimit }));
   app.use(accountRecoveryRouter({ authRateLimit }));
   app.use('/pods', podsRouter());
@@ -100,6 +104,7 @@ export function createApp({ authRateLimit } = {}) {
   app.use('/admin', adminRouter());
 
   app.use((req, res) => {
+    noindex(res);
     res.status(404).render('error', {
       title: 'Not found',
       status: 404,
@@ -109,6 +114,7 @@ export function createApp({ authRateLimit } = {}) {
 
   // Express identifies error handlers by their four parameters.
   app.use((err, req, res, next) => {
+    noindex(res);
     if (err.code === 'EBADCSRFTOKEN') {
       return res.status(403).render('error', {
         title: 'Form expired',

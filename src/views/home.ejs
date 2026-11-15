@@ -1,0 +1,109 @@
+<%- include('partials/header') %>
+<section class="hero-cafe rounded-4 p-4 p-lg-5 mb-5">
+  <div class="row align-items-center g-4 g-lg-5">
+    <div class="col-lg-7">
+      <h1 class="display-5 mb-3">Your Personal Nespresso Pod Tracker</h1>
+      <p class="lead mb-3">Keep track of every Nespresso coffee pod you try. Rate your favourite capsules, record tasting notes, organise your collection and discover which coffees you enjoy most.</p>
+      <p class="mb-4 opacity-75">Whether you're exploring new flavours or keeping a record of your everyday favourites, Nespresso Tracker makes managing your coffee journey simple.</p>
+      <div class="d-flex flex-column flex-sm-row align-items-sm-center gap-3">
+        <a href="/register" class="btn btn-crema btn-lg px-4"><i class="bi bi-cup-hot me-2"></i>Start Tracking Your Coffee Pods</a>
+        <a href="/login" class="link-light">Already tracking? Log in</a>
+      </div>
+      <p class="small mt-3 mb-0 opacity-75">Free to use for Original and Vertuo machines.</p>
+    </div>
+    <div class="col-lg-5 text-center">
+      <img
+        class="home-hero-img rounded-4"
+        src="/img/home-hero-640.webp"
+        srcset="/img/home-hero-400.webp 400w, /img/home-hero-640.webp 640w, /img/home-hero-900.webp 900w"
+        sizes="(min-width: 992px) 400px, (min-width: 576px) 360px, 90vw"
+        width="640"
+        height="800"
+        fetchpriority="high"
+        decoding="async"
+        alt="An espresso with golden crema in a white cup on a saucer, beside a spoon and coffee beans">
+    </div>
+  </div>
+</section>
+
+<section class="mb-5" aria-labelledby="features-heading">
+  <div class="text-center mb-4">
+    <h2 id="features-heading" class="h1">A coffee capsule tracker built for Nespresso drinkers</h2>
+    <p class="text-muted mb-0">Everything you need to remember what you drank, and what you thought of it.</p>
+  </div>
+  <div class="row g-4">
+    <div class="col-md-4">
+      <div class="card card-cafe h-100">
+        <div class="card-body p-4">
+          <span class="feature-icon mb-3"><i class="bi bi-cup-hot" aria-hidden="true"></i></span>
+          <h3 class="h4">Track Your Coffee Pods</h3>
+          <p class="mb-0">Keep a personal record of the Nespresso capsules you have tried, with the brand, intensity, flavour and the date you tried them.</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card card-cafe h-100">
+        <div class="card-body p-4">
+          <span class="feature-icon mb-3"><i class="bi bi-star-half" aria-hidden="true"></i></span>
+          <h3 class="h4">Rate Your Favourites</h3>
+          <p class="mb-0">Give each pod a score out of 10 and record your tasting notes and preferences, so you never forget a great (or not so great) capsule.</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card card-cafe h-100">
+        <div class="card-body p-4">
+          <span class="feature-icon mb-3"><i class="bi bi-compass" aria-hidden="true"></i></span>
+          <h3 class="h4">Discover New Coffees</h3>
+          <p class="mb-0">Search and filter your collection by flavour and intensity, and see your statistics to find the coffees you enjoy most and work out what to try next.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="mb-5" aria-labelledby="how-heading">
+  <h2 id="how-heading" class="h1 text-center mb-4">How the Nespresso pod tracker works</h2>
+  <ol class="row g-4 list-unstyled mb-0">
+    <li class="col-md-4">
+      <span class="step-number">1</span>
+      <h3 class="h5 mt-2">Create your free account</h3>
+      <p class="mb-0">Sign up with your email address and choose Original or Vertuo.</p>
+    </li>
+    <li class="col-md-4">
+      <span class="step-number">2</span>
+      <h3 class="h5 mt-2">Add the capsules you try</h3>
+      <p class="mb-0">Record each pod as you drink it, with its intensity, flavour and your notes.</p>
+    </li>
+    <li class="col-md-4">
+      <span class="step-number">3</span>
+      <h3 class="h5 mt-2">Rate and revisit your favourites</h3>
+      <p class="mb-0">Score every coffee, then filter your collection and check your stats to see what you love.</p>
+    </li>
+  </ol>
+</section>
+
+<section class="cta-band rounded-4 overflow-hidden mb-3" aria-labelledby="cta-heading">
+  <div class="row g-0 align-items-stretch">
+    <div class="col-md-6 order-md-2">
+      <img
+        class="cta-img"
+        src="/img/home-cta-800.webp"
+        srcset="/img/home-cta-480.webp 480w, /img/home-cta-800.webp 800w, /img/home-cta-1200.webp 1200w"
+        sizes="(min-width: 768px) 50vw, 100vw"
+        width="800"
+        height="533"
+        loading="lazy"
+        decoding="async"
+        alt="An espresso cup and saucer on a sunlit wooden table">
+    </div>
+    <div class="col-md-6 order-md-1 p-4 p-lg-5 d-flex flex-column justify-content-center">
+      <h2 id="cta-heading" class="h1">Start your coffee journey</h2>
+      <p class="mb-4">Create a free account and start keeping a record of every coffee pod you try.</p>
+      <div>
+        <a href="/register" class="btn btn-crema btn-lg px-4">Start Tracking Your Coffee Pods</a>
+      </div>
+    </div>
+  </div>
+</section>
+<%- include('partials/footer') %>
