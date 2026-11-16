@@ -254,7 +254,7 @@ Google Analytics (through a Google Tag Manager container) is built to meet UK GD
 - The server never renders the Google snippet. `public/js/consent.js` reads the visitor's choice from the first-party `nt_consent` cookie (`v1:granted` or `v1:denied`, 6 months) and, only on `granted`, runs Google's `dataLayer` snippet and injects `gtm.js`. The snippet lives in an external file because the CSP forbids inline scripts. Consent Mode keeps ad storage and ad personalisation denied.
 - First visit (or an expired choice, or after bumping `CONSENT_VERSION` in `consent.js`): a banner with equally prominent **Accept** and **Reject** buttons.
 - Change of mind: **Cookie settings** in the footer reopens the banner, and `/cookies` has Accept and Withdraw buttons. Withdrawing denies consent, deletes `_ga*`, `_gid`, `_gat*` and `_gcl*` cookies on the site's domain and its parent domains, and reloads the page so the already-loaded Google script is gone and tracking has stopped.
-- `/cookies` is a public page (in the sitemap) linked from the footer. Update `POLICY_LAST_UPDATED` in `src/routes/legal.js` whenever its content changes, and bump `CONSENT_VERSION` if people must be asked again.
+- `/cookies` is a public page (in the sitemap) linked from the footer. Bump `CONSENT_VERSION` in `public/js/consent.js` if people must be asked again.
 
 Google-side settings to check (they are not controlled by this code):
 
