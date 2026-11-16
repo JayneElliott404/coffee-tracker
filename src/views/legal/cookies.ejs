@@ -29,7 +29,7 @@
         <thead><tr><th scope="col">Name</th><th scope="col">Purpose</th><th scope="col">Set by</th><th scope="col">Lasts</th></tr></thead>
         <tbody>
           <tr><td><code>nespresso-tracker.sid</code></td><td>Keeps you logged in and identifies your session</td><td>Us (first party)</td><td>Up to 7 days</td></tr>
-          <tr><td><code>nespresso-tracker.x-csrf-token</code> (<code>__Host-nespresso-tracker.x-csrf-token</code> on the live site)</td><td>Protects forms from forgery (CSRF)</td><td>Us (first party)</td><td>Until you close your browser</td></tr>
+          <tr><td><code>*nespresso-tracker.x-csrf-token</code></td><td>Protects forms from forgery (CSRF)</td><td>Us (first party)</td><td>Until you close your browser</td></tr>
           <% if (locals.googleTagId) { %>
           <tr><td><code>nt_consent</code></td><td>Remembers whether you accepted or rejected analytics cookies</td><td>Us (first party)</td><td>6 months</td></tr>
           <% } %>
@@ -49,7 +49,6 @@
         </tbody>
       </table>
     </div>
-    <p class="small text-muted">Google may change the exact cookies it uses; when you withdraw consent we remove any cookies beginning <code>_ga</code>, <code>_gid</code>, <code>_gat</code> or <code>_gcl</code>.</p>
     <% } %>
   </div>
 </div>
