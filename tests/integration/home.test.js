@@ -93,6 +93,7 @@ describe('crawler controls', () => {
     expect([...res.text.matchAll(/<loc>(.+?)<\/loc>/g)].map((m) => m[1])).toEqual([
       'https://nespresso-tracker.example/',
       'https://nespresso-tracker.example/register',
+      'https://nespresso-tracker.example/cookies',
     ]);
   });
 
