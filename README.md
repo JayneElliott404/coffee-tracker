@@ -227,7 +227,7 @@ src/
   config/db.js
   middleware/          # auth (loadUser, requireAuth, requireAdmin), flash, seo (base URL, noindex)
   models/              # User, Pod, EmailToken
-  routes/              # home (public homepage, robots.txt, sitemap.xml), legal (privacy and cookie policies), auth, accountRecovery (confirm email, forgot/reset password), pods, stats, account, admin
+  routes/              # home (public homepage, robots.txt, sitemap.xml), legal (cookie policy), auth, accountRecovery (confirm email, forgot/reset password), pods, stats, account, admin
   services/            # email (Resend), emailTokens (issue/consume single-use tokens)
   utils/               # podQuery (search/sort), format helpers
   validators/          # express-validator rules
@@ -235,7 +235,7 @@ src/
 public/                # CSS, JS, logo, homepage images (credits in img/CREDITS.md)
 tests/
   unit/                # validators, query builder, model/format helpers, cookie consent script (jsdom)
-  integration/         # home (SEO), legal (privacy, cookies, analytics gating), auth, accountRecovery, pods, stats, account, admin (Supertest; Resend is mocked)
+  integration/         # home (SEO), legal (cookies, analytics gating), auth, accountRecovery, pods, stats, account, admin (Supertest; Resend is mocked)
 ```
 
 ## SEO
@@ -254,15 +254,15 @@ Google Analytics (through a Google Tag Manager container) is built to meet UK GD
 - The server never renders the Google snippet. `public/js/consent.js` reads the visitor's choice from the first-party `nt_consent` cookie (`v1:granted` or `v1:denied`, 6 months) and, only on `granted`, runs Google's `dataLayer` snippet and injects `gtm.js`. The snippet lives in an external file because the CSP forbids inline scripts. Consent Mode keeps ad storage and ad personalisation denied.
 - First visit (or an expired choice, or after bumping `CONSENT_VERSION` in `consent.js`): a banner with equally prominent **Accept** and **Reject** buttons.
 - Change of mind: **Cookie settings** in the footer reopens the banner, and `/cookies` has Accept and Withdraw buttons. Withdrawing denies consent, deletes `_ga*`, `_gid`, `_gat*` and `_gcl*` cookies on the site's domain and its parent domains, and reloads the page so the already-loaded Google script is gone and tracking has stopped.
-- `/privacy` and `/cookies` are public pages (in the sitemap) linked from the footer. The legal contact is `support@nespresso-tracker.com`. Update `POLICY_LAST_UPDATED` in `src/routes/legal.js` whenever the policies change, and bump `CONSENT_VERSION` if people must be asked again.
+- `/cookies` is a public page (in the sitemap) linked from the footer. Update `POLICY_LAST_UPDATED` in `src/routes/legal.js` whenever its content changes, and bump `CONSENT_VERSION` if people must be asked again.
 
-Google-side settings to check (they are not controlled by this code, and the privacy policy assumes them):
+Google-side settings to check (they are not controlled by this code):
 
 - The container contains only the Google Analytics 4 tag. Any Ads, remarketing or other tags need extending the policy and banner first.
 - Admin > Data collection > **Data retention** is set to 2 months; Google signals and ad personalisation are off; data sharing settings are off; the data processing terms are accepted.
 - After a deploy, open the site, accept, and check in the browser's dev tools that the cookies match the table on `/cookies`.
 
-The policy text is a good-faith template, not legal advice. Have it checked, and add a postal address and ICO registration number if you have them.
+The cookie policy text is a good-faith template, not legal advice. Have it checked before launch.
 
 ## Security notes
 

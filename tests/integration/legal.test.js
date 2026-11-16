@@ -5,7 +5,7 @@ import { registerAndLogin, setupTestDb } from '../helpers.js';
 
 setupTestDb();
 
-const PAGES = ['/', '/register', '/login', '/privacy', '/cookies', '/forgot-password', '/does-not-exist'];
+const PAGES = ['/', '/register', '/login', '/cookies', '/forgot-password', '/does-not-exist'];
 
 describe('analytics configured', () => {
   let app;
@@ -89,36 +89,13 @@ describe('analytics not configured', () => {
   });
 });
 
-describe('legal pages', () => {
+describe('cookie policy page', () => {
   let app;
   beforeAll(() => {
     app = createApp({ authRateLimit: 1000 });
   });
 
-  it('serves an indexable privacy policy with the information UK GDPR requires', async () => {
-    const res = await request(app).get('/privacy');
-    expect(res.status).toBe(200);
-    expect(res.headers['x-robots-tag']).toBeUndefined();
-    expect(res.text).toContain('<link rel="canonical" href="http://app.test/privacy">');
-    for (const required of [
-      'Red Kite Development',
-      'support@nespresso-tracker.com',
-      'Lawful basis',
-      'Your consent',
-      'Google Analytics',
-      'withdraw your consent at any time',
-      'Transfers outside the UK',
-      'How long we keep your data',
-      'right to complain',
-      'Information Commissioner',
-      'erased',
-      'portability',
-    ]) {
-      expect(res.text, required).toContain(required);
-    }
-  });
-
-  it('serves an indexable cookie policy listing the necessary cookies', async () => {
+  it('is indexable and lists the necessary cookies', async () => {
     const res = await request(app).get('/cookies');
     expect(res.status).toBe(200);
     expect(res.headers['x-robots-tag']).toBeUndefined();
@@ -126,16 +103,14 @@ describe('legal pages', () => {
     expect(res.text).toContain('x-csrf-token');
   });
 
-  it('is reachable from the footer and the register page', async () => {
+  it('is reachable from the footer', async () => {
     const home = (await request(app).get('/')).text;
-    expect(home).toContain('<a href="/privacy" class="footer-link">Privacy policy</a>');
     expect(home).toContain('<a href="/cookies" class="footer-link">Cookie policy</a>');
-    expect((await request(app).get('/register')).text).toContain('<a href="/privacy">privacy policy</a>');
   });
 
-  it('lists the legal pages in the sitemap', async () => {
-    const res = await request(app).get('/sitemap.xml');
-    expect(res.text).toContain('<loc>http://app.test/privacy</loc>');
-    expect(res.text).toContain('<loc>http://app.test/cookies</loc>');
+  it('is listed in the sitemap, and there is no privacy page', async () => {
+    expect((await request(app).get('/sitemap.xml')).text).toContain('<loc>http://app.test/cookies</loc>');
+    expect((await request(app).get('/privacy')).status).toBe(404);
   });
 });
+
