@@ -11,7 +11,7 @@ const PRIVATE_PREFIXES = [
 ];
 
 // Pages that should appear in search results and in sitemap.xml.
-export const PUBLIC_PATHS = ['/', '/register'];
+export const PUBLIC_PATHS = ['/', '/register', '/privacy', '/cookies'];
 
 const isPrivate = (path) => PRIVATE_PREFIXES.some((prefix) => path === prefix || path.startsWith(`${prefix}/`));
 

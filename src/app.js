@@ -10,7 +10,9 @@ import { doubleCsrf } from 'csrf-csrf';
 import { loadUser } from './middleware/auth.js';
 import { flash } from './middleware/flash.js';
 import { noindex, seo } from './middleware/seo.js';
+import { validGoogleTagId, GOOGLE_TAG_SOURCES } from './utils/analytics.js';
 import { homeRouter, crawlerFilesRouter } from './routes/home.js';
+import { legalRouter } from './routes/legal.js';
 import { accountRouter } from './routes/account.js';
 import { accountRecoveryRouter } from './routes/accountRecovery.js';
 import { adminRouter } from './routes/admin.js';
@@ -30,6 +32,8 @@ export function createApp({ authRateLimit } = {}) {
   if (isProd && !process.env.RESEND_API_KEY) throw new Error('RESEND_API_KEY is not set. Emails cannot be sent without it.');
   if (isProd && !process.env.APP_URL) throw new Error('APP_URL is not set. It is used to build the links in emails.');
 
+  const googleTagId = validGoogleTagId(process.env.GOOGLE_TAG_ID);
+
   const app = express();
   app.set('views', path.join(srcDir, 'views'));
   app.set('view engine', 'ejs');
@@ -41,10 +45,12 @@ export function createApp({ authRateLimit } = {}) {
       contentSecurityPolicy: {
         directives: {
           // Buy Me a Coffee widget: external script, and it writes an inline <style> block.
-          'script-src': ["'self'", 'https://cdnjs.buymeacoffee.com'],
+          // Google domains are only allowed when analytics is configured; the tag itself loads only after consent.
+          'script-src': ["'self'", 'https://cdnjs.buymeacoffee.com', ...(googleTagId ? GOOGLE_TAG_SOURCES.script : [])],
           'style-src': ["'self'", 'https://fonts.googleapis.com', "'unsafe-inline'"],
           'font-src': ["'self'", 'https://fonts.gstatic.com'],
-          'img-src': ["'self'", 'data:'],
+          'img-src': ["'self'", 'data:', ...(googleTagId ? GOOGLE_TAG_SOURCES.img : [])],
+          'connect-src': ["'self'", ...(googleTagId ? GOOGLE_TAG_SOURCES.connect : [])],
           'upgrade-insecure-requests': isProd ? [] : null,
         },
       },
@@ -87,6 +93,7 @@ export function createApp({ authRateLimit } = {}) {
   app.use((req, res, next) => {
     res.locals.csrfToken = generateCsrfToken(req, res);
     res.locals.path = req.path;
+    res.locals.googleTagId = googleTagId;
     res.locals.getFlash = (type) => req.flash(type);
     Object.assign(res.locals, { formatDate, formatScore, podLabel, scoreClass, toDateInput, MACHINE_TYPES, machineLabel });
     next();
@@ -96,6 +103,7 @@ export function createApp({ authRateLimit } = {}) {
   app.use(doubleCsrfProtection);
 
   app.use(homeRouter());
+  app.use(legalRouter());
   app.use(authRouter({ authRateLimit }));
   app.use(accountRecoveryRouter({ authRateLimit }));
   app.use('/pods', podsRouter());

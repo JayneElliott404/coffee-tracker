@@ -1,0 +1,17 @@
+<% if (locals.googleTagId) { %>
+<%# Hidden until consent.js finds no stored choice. Accept and Reject are deliberately equal in prominence. %>
+<section id="cookie-banner" class="cookie-banner" role="region" aria-labelledby="cookie-banner-title" tabindex="-1" hidden>
+  <div class="container">
+    <div class="row align-items-center g-3">
+      <div class="col-lg-8">
+        <h2 id="cookie-banner-title" class="h6 mb-1">Can we use analytics cookies?</h2>
+        <p class="small mb-0">We'd like to use Google Analytics cookies to see how Nespresso Tracker is used so we can improve it. They are off unless you say yes, and you can change your mind at any time from <strong>Cookie settings</strong> in the footer. See our <a href="/cookies">cookie policy</a> and <a href="/privacy">privacy policy</a>.</p>
+      </div>
+      <div class="col-lg-4 d-flex gap-2 justify-content-lg-end">
+        <button type="button" class="btn btn-outline-light flex-fill flex-lg-grow-0" data-consent-choice="denied">Reject analytics</button>
+        <button type="button" class="btn btn-outline-light flex-fill flex-lg-grow-0" data-consent-choice="granted">Accept analytics</button>
+      </div>
+    </div>
+  </div>
+</section>
+<% } %>

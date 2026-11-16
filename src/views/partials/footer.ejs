@@ -3,11 +3,17 @@
 <footer class="footer-cafe py-3 mt-auto">
   <div class="container text-center small">
     <i class="bi bi-cup-hot me-1"></i>Nespresso Tracker &middot; Every pod, rated with love
+    <div class="mt-1">
+      <a href="/privacy" class="footer-link">Privacy policy</a> &middot; <a href="/cookies" class="footer-link">Cookie policy</a>
+      <% if (locals.googleTagId) { %> &middot; <button type="button" class="btn btn-link footer-link p-0 align-baseline small" data-consent-open>Cookie settings</button><% } %>
+    </div>
     <div class="mt-1">&copy; Red Kite Development <%= new Date().getFullYear() %></div>
     <div class="mt-1 opacity-75">Nespresso is a registered trademark of Société des Produits Nestlé S.A. Nespresso Tracker is an independent project and is not affiliated with or endorsed by Nestlé or Nespresso.</div>
   </div>
 </footer>
+<%- include('cookieBanner') %>
 <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 <script src="/js/app.js"></script>
+<% if (locals.googleTagId) { %><script type="module" src="/js/consent.js"></script><% } %>
 </body>
 </html>

@@ -1,0 +1,62 @@
+<%- include('../partials/header') %>
+<div class="row justify-content-center">
+  <div class="col-lg-9 col-xl-8 legal-page">
+    <h1 class="h2 mb-1">Cookie policy</h1>
+    <p class="text-muted small">Last updated: <%= lastUpdated %></p>
+    <p>Cookies are small text files stored on your device. This page lists the cookies Nespresso Tracker uses and lets you change your choice about analytics cookies at any time. See our <a href="/privacy">privacy policy</a> for how we handle personal data.</p>
+
+    <% if (locals.googleTagId) { %>
+    <div class="card card-cafe mb-4" id="cookie-choice">
+      <div class="card-body">
+        <h2 class="h5">Your analytics choice</h2>
+        <p class="mb-2" data-consent-status role="status">Analytics cookies are off.</p>
+        <p class="small text-muted">Analytics cookies are off unless you accept them. You can change your choice here whenever you like. Withdrawing stops analytics straight away.</p>
+        <div class="d-flex flex-wrap gap-2">
+          <button type="button" class="btn btn-espresso" data-consent-choice="granted">Accept analytics</button>
+          <button type="button" class="btn btn-outline-secondary" data-consent-choice="denied">Reject / withdraw analytics</button>
+        </div>
+        <noscript><p class="small text-muted mt-2 mb-0">Cookie choices need JavaScript. With JavaScript off, no analytics cookies are ever set.</p></noscript>
+      </div>
+    </div>
+    <% } else { %>
+    <p><strong>We do not currently use any analytics or other optional cookies,</strong> so there is nothing to accept or reject.</p>
+    <% } %>
+
+    <h2 class="h4 mt-4" id="necessary">Strictly necessary cookies</h2>
+    <p>These make the site work and keep it secure. The law does not require consent for them, so they cannot be switched off here (you can block them in your browser, but then you will not be able to log in or submit forms).</p>
+    <div class="table-responsive">
+      <table class="table table-sm align-top">
+        <thead><tr><th scope="col">Name</th><th scope="col">Purpose</th><th scope="col">Set by</th><th scope="col">Lasts</th></tr></thead>
+        <tbody>
+          <tr><td><code>nespresso-tracker.sid</code></td><td>Keeps you logged in and identifies your session</td><td>Us (first party)</td><td>Up to 7 days</td></tr>
+          <tr><td><code>nespresso-tracker.x-csrf-token</code> (<code>__Host-nespresso-tracker.x-csrf-token</code> on the live site)</td><td>Protects forms from forgery (CSRF)</td><td>Us (first party)</td><td>Until you close your browser</td></tr>
+          <% if (locals.googleTagId) { %>
+          <tr><td><code>nt_consent</code></td><td>Remembers whether you accepted or rejected analytics cookies</td><td>Us (first party)</td><td>6 months</td></tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+
+    <% if (locals.googleTagId) { %>
+    <h2 class="h4 mt-4" id="analytics">Analytics cookies (only if you accept)</h2>
+    <p>These are set by Google Analytics, a web analytics service provided by Google, only after you accept. They tell us how many people visit, which pages are used and how people arrive, so we can improve the site. Information is collected in a way that does not directly identify you, but cookie identifiers are personal data. See section 4 of our <a href="/privacy#analytics">privacy policy</a>.</p>
+    <div class="table-responsive">
+      <table class="table table-sm align-top">
+        <thead><tr><th scope="col">Name</th><th scope="col">Purpose</th><th scope="col">Set by</th><th scope="col">Lasts</th></tr></thead>
+        <tbody>
+          <tr><td><code>_ga</code></td><td>Distinguishes visitors, so we can count users and sessions</td><td>Google (set on our domain)</td><td>Up to 2 years</td></tr>
+          <tr><td><code>_ga_&lt;container ID&gt;</code></td><td>Keeps track of the current session state</td><td>Google (set on our domain)</td><td>Up to 2 years</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="small text-muted">Google may change the exact cookies it uses; when you withdraw consent we remove any cookies beginning <code>_ga</code>, <code>_gid</code>, <code>_gat</code> or <code>_gcl</code>.</p>
+    <% } %>
+
+    <h2 class="h4 mt-4" id="other">Other websites</h2>
+    <p>Pages also load fonts from Google Fonts and a "Buy me a coffee" button from Buy Me a Coffee. Their servers receive your IP address when the page loads. See our <a href="/privacy#sharing">privacy policy</a> for details.</p>
+
+    <h2 class="h4 mt-4" id="browser">Managing cookies in your browser</h2>
+    <p>You can also delete or block cookies in your browser settings. If you delete the <code>nt_consent</code> cookie we will ask for your choice again.</p>
+  </div>
+</div>
+<%- include('../partials/footer') %>

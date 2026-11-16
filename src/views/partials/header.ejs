@@ -4,6 +4,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="csrf-token" content="<%= locals.csrfToken || '' %>">
+<% if (locals.googleTagId) { %>
+  <meta name="google-tag-id" content="<%= googleTagId %>">
+<% } %>
 <%
   // Optional SEO locals: fullTitle (replaces the "· Nespresso Tracker" suffix), metaDescription, canonicalPath, ogImage, jsonLd.
   const pageTitle = locals.fullTitle || (locals.title ? `${title} · Nespresso Tracker` : 'Nespresso Tracker');
