@@ -76,6 +76,27 @@ describe('public homepage', () => {
   });
 });
 
+describe('favicons', () => {
+  it('links PNG icons because Google Search does not support SVG favicons', async () => {
+    const html = (await request(app).get('/')).text;
+    const icons = [...html.matchAll(/<link rel="(?:icon|apple-touch-icon)" href="([^"]+)"/g)].map((m) => m[1]);
+    expect(icons).toEqual(expect.arrayContaining(['/img/favicon-48.png', '/img/favicon-192.png', '/img/apple-touch-icon.png']));
+
+    const sizes = { '/img/favicon-48.png': 48, '/img/favicon-192.png': 192, '/img/apple-touch-icon.png': 180 };
+    for (const [href, size] of Object.entries(sizes)) {
+      const res = await request(app).get(href).buffer(true).parse((r, cb) => {
+        const chunks = [];
+        r.on('data', (c) => chunks.push(c));
+        r.on('end', () => cb(null, Buffer.concat(chunks)));
+      });
+      expect(res.status, href).toBe(200);
+      expect(res.type, href).toBe('image/png');
+      expect(res.body.readUInt32BE(16), `${href} width`).toBe(size);
+      expect(res.body.readUInt32BE(20), `${href} height`).toBe(size);
+    }
+  });
+});
+
 describe('crawler controls', () => {
   it('serves robots.txt that hides personal areas and points to the sitemap', async () => {
     const res = await request(app).get('/robots.txt');
